@@ -97,6 +97,39 @@ public class TestingbotREST {
             return "";
         }
     }
+
+    /**
+     * Stops a Test with sessionID (Selenium sessionID)
+     *
+     * @param sessionID The sessionID retrieved from Selenium WebDriver/RC
+     * @return response The API response
+     */
+    public String updateTest(String sessionID)
+    {
+        try {
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            String userpass = this.key + ":" + this.secret;
+            String encoding = Base64.encodeBytes(userpass.getBytes("UTF-8"));
+
+            HttpPut putRequest = new HttpPut("https://api.testingbot.com/v1/tests/" + sessionID + "/stop");
+            putRequest.setHeader("Authorization", "Basic " + encoding);
+            putRequest.setHeader("User-Agent", "TestingBotRest/1.0");
+
+            HttpResponse response = httpClient.execute(putRequest);
+            BufferedReader br = new BufferedReader(
+                     new InputStreamReader((response.getEntity().getContent()), "UTF8"));
+            String output;
+            StringBuilder sb = new StringBuilder();
+            while ((output = br.readLine()) != null) {
+                    sb.append(output);
+            }
+            
+            return sb.toString();
+        } catch (Exception ex) {
+            Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, ex);
+            return "";
+        }
+    }
     
     /**
      * Deletes a Test with sessionID (Selenium sessionID)
@@ -212,6 +245,94 @@ public class TestingbotREST {
         } catch (Exception ex) {
             Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, ex);
             return "";
+        }
+    }
+
+    /**
+     * Gets information from TestingBot for your user account
+     *
+     * @return response The API response
+     */
+    public String getUserInfo()
+    {
+        try {
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            String userpass = this.key + ":" + this.secret;
+            String encoding = Base64.encodeBytes(userpass.getBytes("UTF-8"));
+
+            HttpGet getRequest = new HttpGet("https://api.testingbot.com/v1/user");
+            getRequest.setHeader("Authorization", "Basic " + encoding);
+            getRequest.setHeader("User-Agent", "TestingBotRest/1.0");
+
+            HttpResponse response = httpClient.execute(getRequest);
+            BufferedReader br = new BufferedReader(
+                     new InputStreamReader((response.getEntity().getContent()), "UTF8"));
+            String output;
+            StringBuilder sb = new StringBuilder();
+            while ((output = br.readLine()) != null) {
+                    sb.append(output);
+            }
+            
+            return sb.toString();
+        } catch (Exception ex) {
+            Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, ex);
+            return "";
+        }
+    }
+
+    /**
+     * Gets assigned tunnels for your account on TestingBot
+     *
+     * @return response The API response
+     */
+    public String getTunnels()
+    {
+        try {
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            String userpass = this.key + ":" + this.secret;
+            String encoding = Base64.encodeBytes(userpass.getBytes("UTF-8"));
+
+            HttpGet getRequest = new HttpGet("https://api.testingbot.com/v1/tunnel/list");
+            getRequest.setHeader("Authorization", "Basic " + encoding);
+            getRequest.setHeader("User-Agent", "TestingBotRest/1.0");
+
+            HttpResponse response = httpClient.execute(getRequest);
+            BufferedReader br = new BufferedReader(
+                     new InputStreamReader((response.getEntity().getContent()), "UTF8"));
+            String output;
+            StringBuilder sb = new StringBuilder();
+            while ((output = br.readLine()) != null) {
+                    sb.append(output);
+            }
+            
+            return sb.toString();
+        } catch (Exception ex) {
+            Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, ex);
+            return "";
+        }
+    }
+
+    /**
+     * Deletes a Tunnel with tunnel ID
+     *
+     * @param tunnelID The tunnelID of the tunnel to delete from TestingBot
+     */
+    public void deleteTunnel(String tunnelID)
+    {
+        try {
+            URL url = new URL("https://api.testingbot.com/v1/tunnel/" + tunnelID);
+            HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
+            httpCon.setDoOutput(true);
+            String userpass = this.key + ":" + this.secret;
+            String auth = Base64.encodeBytes(userpass.getBytes("UTF-8"));
+            httpCon.setRequestProperty("Authorization", auth);
+            httpCon.setRequestProperty(
+                "Content-Type", "application/x-www-form-urlencoded" );
+            httpCon.setRequestMethod("DELETE");
+            httpCon.connect();
+            httpCon.getInputStream();
+        } catch (Exception ex) {
+            Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
