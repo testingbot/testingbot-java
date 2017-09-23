@@ -1,5 +1,6 @@
 package com.testingbot.testingbotrest;
 
+import com.testingbot.models.TestingbotBrowser;
 import com.testingbot.models.TestingbotTest;
 import com.testingbot.models.TestingbotTestCollection;
 import com.testingbot.models.TestingbotTunnel;
@@ -11,12 +12,12 @@ import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TestingBotResetTest extends TestCase {
+public class TestingBotRestTest extends TestCase {
     private TestingbotREST api;
     
     @Before
     public void setUp() throws Exception {
-        this.api = new TestingbotREST("travis", "rocks");
+        this.api = new TestingbotREST(System.getenv("TB_KEY"), System.getenv("TB_SECRET"));
     }
     
     @Test
@@ -102,5 +103,16 @@ public class TestingBotResetTest extends TestCase {
     public void testGetTunnels() throws Exception {
         ArrayList<TestingbotTunnel> tunnels = this.api.getTunnels();
         assertEquals(tunnels.size(), 0);
+    }
+    
+    @Test
+    public void testGetBrowsers() throws Exception {
+        ArrayList<TestingbotBrowser> browsers = this.api.getBrowsers();
+        assertEquals(browsers.size() > 0, true);
+    }
+    
+    @Test
+    public void testCalculateAuthentication() throws Exception {
+        assertEquals(this.api.getAuthenticationHash("test"), "344ebf07233168c4882adf953a8a8c9b");
     }
 }

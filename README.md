@@ -23,6 +23,15 @@ TestingbotApiException(String json)
 TestingbotUnauthorizedException
 ```
 
+### getBrowsers
+Retrieves collection of available browsers
+<https://testingbot.com/support/api>
+
+
+```java
+ArrayList<TestingbotBrowser> browsers = restApi.getBrowsers();
+```
+
 ### updateTest
 Update meta-data for a test
 <https://testingbot.com/support/api#updatetest>
@@ -119,6 +128,21 @@ Deletes/stops a specific tunnel for the current user
 boolean success = restApi.deleteTunnel(String tunnelID);
 ```
 
+### getAuthenticationHash
+Calculates the authenticationHash necessary to share tests
+<https://testingbot.com/support/other/sharing>
+
+
+```java
+String hash = restApi.getAuthenticationHash(String identifier);
+```
+
+Test
+-----
+
+```java
+mvn -DTB_KEY=... -DTB_SECRET=... test
+```
 
 Maven
 -----

@@ -3,6 +3,7 @@ package com.testingbot.testingbotrest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.testingbot.models.TestingbotBrowser;
 import com.testingbot.models.TestingbotBuildCollection;
 import com.testingbot.models.TestingbotTestBuildCollection;
 import com.testingbot.models.TestingbotTest;
@@ -21,9 +22,12 @@ import java.util.List;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import org.apache.http.HttpResponse;
 import org.apache.http.message.BasicNameValuePair;
@@ -104,7 +108,7 @@ public class TestingbotREST {
 
             HttpPut putRequest = new HttpPut("https://api.testingbot.com/v1/tests/" + sessionID);
             putRequest.setHeader("Authorization", "Basic " + encoding);
-            putRequest.setHeader("User-Agent", "TestingBotRest/1.0");
+            putRequest.setHeader("User-Agent", getUserAgent());
 
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
             for (Map.Entry<String, Object> entry : details.entrySet()) {
@@ -162,7 +166,7 @@ public class TestingbotREST {
 
             HttpPut putRequest = new HttpPut("https://api.testingbot.com/v1/tests/" + sessionID + "/stop");
             putRequest.setHeader("Authorization", "Basic " + encoding);
-            putRequest.setHeader("User-Agent", "TestingBotRest/1.0");
+            putRequest.setHeader("User-Agent", getUserAgent());
 
             HttpResponse response = httpClient.execute(putRequest);
             BufferedReader br = new BufferedReader(
@@ -208,6 +212,8 @@ public class TestingbotREST {
             httpCon.setRequestProperty("Authorization", auth);
             httpCon.setRequestProperty(
                     "Content-Type", "application/x-www-form-urlencoded");
+            httpCon.setRequestProperty(
+                    "User-Agent", getUserAgent());
             httpCon.setRequestMethod("DELETE");
             httpCon.connect();
             httpCon.getInputStream();
@@ -239,21 +245,19 @@ public class TestingbotREST {
     }
 
     /**
-     * Gets list of available browsers from TestingBot for automationApi (rc or
-     * webdriver)
+     * Gets list of available browsers from TestingBot
      *
-     * @param automationApi rc or webdriver
-     * @return response The API response
+     * @return ArrayList<TestingbotBrowser> The list of browsers
      */
-    public String getSupportedPlatforms(String automationApi) {
+    public ArrayList<TestingbotBrowser> getBrowsers() {
         try {
             DefaultHttpClient httpClient = new DefaultHttpClient();
             String userpass = this.key + ":" + this.secret;
             String encoding = Base64.encodeBytes(userpass.getBytes("UTF-8"));
 
-            HttpGet getRequest = new HttpGet("https://api.testingbot.com/v1/browsers?type=" + automationApi);
+            HttpGet getRequest = new HttpGet("https://api.testingbot.com/v1/browsers");
             getRequest.setHeader("Authorization", "Basic " + encoding);
-            getRequest.setHeader("User-Agent", "TestingBotRest/1.0");
+            getRequest.setHeader("User-Agent", getUserAgent());
 
             HttpResponse response = httpClient.execute(getRequest);
             BufferedReader br = new BufferedReader(
@@ -263,12 +267,18 @@ public class TestingbotREST {
             while ((output = br.readLine()) != null) {
                 sb.append(output);
             }
+            
+            Type listType = new TypeToken<ArrayList<TestingbotBrowser>>(){}.getType();
 
-            return sb.toString();
-        } catch (Exception ex) {
+            return gson.fromJson(sb.toString(), listType);
+        } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, ex);
-            return "";
+        } catch (IOException ex) {
+            Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (UnsupportedOperationException ex) {
+            Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return new ArrayList<TestingbotBrowser>();
     }
 
     /**
@@ -285,7 +295,7 @@ public class TestingbotREST {
 
             HttpGet getRequest = new HttpGet("https://api.testingbot.com/v1/tests/?offset=" + offset + "&count=" + count);
             getRequest.setHeader("Authorization", "Basic " + encoding);
-            getRequest.setHeader("User-Agent", "TestingBotRest/1.0");
+            getRequest.setHeader("User-Agent", getUserAgent());
 
             HttpResponse response = httpClient.execute(getRequest);
             BufferedReader br = new BufferedReader(
@@ -327,7 +337,7 @@ public class TestingbotREST {
 
             HttpGet getRequest = new HttpGet("https://api.testingbot.com/v1/tests/" + sessionID);
             getRequest.setHeader("Authorization", "Basic " + encoding);
-            getRequest.setHeader("User-Agent", "TestingBotRest/1.0");
+            getRequest.setHeader("User-Agent", getUserAgent());
 
             HttpResponse response = httpClient.execute(getRequest);
             BufferedReader br = new BufferedReader(
@@ -368,7 +378,7 @@ public class TestingbotREST {
 
             HttpGet getRequest = new HttpGet("https://api.testingbot.com/v1/user");
             getRequest.setHeader("Authorization", "Basic " + encoding);
-            getRequest.setHeader("User-Agent", "TestingBotRest/1.0");
+            getRequest.setHeader("User-Agent", getUserAgent());
 
             HttpResponse response = httpClient.execute(getRequest);
             BufferedReader br = new BufferedReader(
@@ -408,7 +418,7 @@ public class TestingbotREST {
 
             HttpGet getRequest = new HttpGet("https://api.testingbot.com/v1/tunnel/list");
             getRequest.setHeader("Authorization", "Basic " + encoding);
-            getRequest.setHeader("User-Agent", "TestingBotRest/1.0");
+            getRequest.setHeader("User-Agent", getUserAgent());
 
             HttpResponse response = httpClient.execute(getRequest);
             BufferedReader br = new BufferedReader(
@@ -450,6 +460,8 @@ public class TestingbotREST {
             httpCon.setRequestProperty("Authorization", auth);
             httpCon.setRequestProperty(
                     "Content-Type", "application/x-www-form-urlencoded");
+            httpCon.setRequestProperty(
+                    "User-Agent", getUserAgent());
             httpCon.setRequestMethod("DELETE");
             httpCon.connect();
             httpCon.getInputStream();
@@ -492,7 +504,7 @@ public class TestingbotREST {
 
             HttpGet getRequest = new HttpGet("https://api.testingbot.com/v1/builds/" + buildIdentifier);
             getRequest.setHeader("Authorization", "Basic " + encoding);
-            getRequest.setHeader("User-Agent", "TestingBotRest/1.0");
+            getRequest.setHeader("User-Agent", getUserAgent());
 
             HttpResponse response = httpClient.execute(getRequest);
             BufferedReader br = new BufferedReader(
@@ -533,7 +545,7 @@ public class TestingbotREST {
 
             HttpGet getRequest = new HttpGet("https://api.testingbot.com/v1/builds/?offset=" + offset + "&count=" + count);
             getRequest.setHeader("Authorization", "Basic " + encoding);
-            getRequest.setHeader("User-Agent", "TestingBotRest/1.0");
+            getRequest.setHeader("User-Agent", getUserAgent());
 
             HttpResponse response = httpClient.execute(getRequest);
             BufferedReader br = new BufferedReader(
@@ -559,5 +571,50 @@ public class TestingbotREST {
             Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, ex);
             return new TestingbotBuildCollection();
         }
+    }
+    
+    /**
+     * Calculates the authentication hash for a specific identifier (sessionId/build-identifier)
+     * https://testingbot.com/support/other/sharing
+     * 
+     * @param String identifier
+     * @return String hash
+     */
+    public String getAuthenticationHash(String identifier) {
+        try {
+            MessageDigest m=MessageDigest.getInstance("MD5");
+            String s = this.key + ":" + this.secret + ":" + identifier;
+            m.update(s.getBytes(), 0, s.length());
+            String md5 = new BigInteger(1, m.digest()).toString(16);
+            return md5;
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Calculates the authentication hash for the current user
+     * https://testingbot.com/support/other/sharing
+     * 
+     * @return String hash
+     */
+    public String getAuthenticationHash() {
+        try {
+            MessageDigest m=MessageDigest.getInstance("MD5");
+            String s = this.key + ":" + this.secret;
+            m.update(s.getBytes(), 0, s.length());
+            String md5 = new BigInteger(1, m.digest()).toString(16);
+            return md5;
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return null;
+    }
+    
+    private String getUserAgent() {
+        return "TestingBotRest/1.0";
     }
 }
