@@ -235,13 +235,12 @@ public class TestingbotREST {
             JSONObject json = new JSONObject(sb.toString());
             return json.getBoolean("success");
         } catch (ProtocolException ex) {
-            Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, ex);
+            throw new TestingbotApiException(ex.getMessage());
         } catch (IOException ex) {
-            Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, ex);
+            throw new TestingbotApiException(ex.getMessage());
         } catch (JSONException ex) {
-            Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, ex);
+            throw new TestingbotApiException(ex.getMessage());
         }
-        return false;
     }
 
     /**
