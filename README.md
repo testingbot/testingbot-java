@@ -13,29 +13,29 @@ Getting Started
 Sign up for an account on TestingBot.com - in the member area you will find the `key` and `secret` required to authenticate with the TestingBot API.
 
 ```java
-	TestingbotREST restApi = new TestingbotREST("key", "secret");
+TestingbotREST restApi = new TestingbotREST("key", "secret");
 ```
 
 *All API methods can throw these exceptions:*
 
 ```java
-	TestingbotApiException(String json)
-	TestingbotUnauthorizedException
+TestingbotApiException(String json)
+TestingbotUnauthorizedException
 ```
 
 ### updateTest
 Update meta-data for a test
 <https://testingbot.com/support/api#updatetest>
 
-- String status_message
-- boolean success
-- String build
-- String name
+- `String` status_message
+- `boolean` success
+- `String` build
+- `String` name
 
 
 ```java
-	boolean success = restApi.updateTest(TestingbotTest test);
-	boolean success = restApi.updateTest(String sessionId, Map<String, Object> details);
+boolean success = restApi.updateTest(TestingbotTest test);
+boolean success = restApi.updateTest(String sessionId, Map<String, Object> details);
 ```
 
 ### stopTest
@@ -44,7 +44,7 @@ Stops a running test
 
 
 ```java
-	boolean success = restApi.stopTest(String sessionId);
+boolean success = restApi.stopTest(String sessionId);
 ```
 
 ### deleteTest
@@ -53,7 +53,7 @@ Deletes a test from TestingBot
 
 
 ```java
-	boolean success = restApi.deleteTest(String sessionId);
+boolean success = restApi.deleteTest(String sessionId);
 ```
 
 ### getTest
@@ -62,7 +62,7 @@ Retrieves information regarding a test
 
 
 ```java
-	TestingbotTest test = restApi.getTest(String sessionId);
+TestingbotTest test = restApi.getTest(String sessionId);
 ```
 
 ### getTests
@@ -71,7 +71,7 @@ Retrieves a collection of tests
 
 
 ```java
-	TestingbotTest test = restApi.getTests(int offset, int count);
+TestingbotTest test = restApi.getTests(int offset, int count);
 ```
 
 ### getBuilds
@@ -80,7 +80,7 @@ Retrieves a collection of builds
 
 
 ```java
-	TestingbotBuildCollection builds = restApi.getBuilds(int offset, int count);
+TestingbotBuildCollection builds = restApi.getBuilds(int offset, int count);
 ```
 
 ### getTestsForBuild
@@ -89,7 +89,7 @@ Retrieves a collection of tests for a specific build
 
 
 ```java
-	TestingbotTestBuildCollection tests = restApi.getTestsForBuild(String buildIdentifier);
+TestingbotTestBuildCollection tests = restApi.getTestsForBuild(String buildIdentifier);
 ```
 
 ### getUserConfig
@@ -98,7 +98,7 @@ Retrieves information about the current user
 
 
 ```java
-	TestingbotUser user = restApi.getUserInfo();
+TestingbotUser user = restApi.getUserInfo();
 ```
 
 ### getTunnels
@@ -107,7 +107,7 @@ Retrieves tunnels for the current user
 
 
 ```java
-	ArrayList<TestingbotTunnel> tunnels = restApi.getTunnels();
+ArrayList<TestingbotTunnel> tunnels = restApi.getTunnels();
 ```
 
 ### deleteTunnel
@@ -116,7 +116,7 @@ Deletes/stops a specific tunnel for the current user
 
 
 ```java
-	boolean success = restApi.deleteTunnel(String tunnelID);
+boolean success = restApi.deleteTunnel(String tunnelID);
 ```
 
 
