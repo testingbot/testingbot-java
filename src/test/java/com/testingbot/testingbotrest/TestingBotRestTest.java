@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 import junit.framework.TestCase;
+import static org.junit.Assert.assertNotEquals;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,25 +24,27 @@ public class TestingBotRestTest extends TestCase {
     @Test
     public void testUpdateTest() throws Exception {
         String sessionID = "6344353dcee24694bf39d5ee5e6e5b11";
+        TestingbotTest test = this.api.getTest(sessionID);
         String randomMessage = UUID.randomUUID().toString();
         HashMap<String, Object> details = new HashMap<String, Object>();
         details.put("success", true);
         details.put("status_message", randomMessage);
         boolean success = this.api.updateTest(sessionID, details);
         assertEquals(success, true);
-        TestingbotTest test = this.api.getTest(sessionID);
-        assertEquals(test.getStatusMessage(), randomMessage);
+        TestingbotTest newTest = this.api.getTest(sessionID);
+        assertNotEquals(newTest.getStatusMessage(), test.getStatusMessage());
     }
     
     @Test
     public void testUpdateTestViaObject() throws Exception {
+        TestingbotTest test = this.api.getTest("6344353dcee24694bf39d5ee5e6e5b11");
         TestingbotTest obj = new TestingbotTest();
         obj.setSessionId("6344353dcee24694bf39d5ee5e6e5b11");
         obj.setStatusMessage(UUID.randomUUID().toString());
         boolean success = this.api.updateTest(obj);
         assertEquals(success, true);
-        TestingbotTest test = this.api.getTest(obj.getSessionId());
-        assertEquals(test.getStatusMessage(), obj.getStatusMessage());
+        TestingbotTest newTest = this.api.getTest(obj.getSessionId());
+        assertNotEquals(newTest.getStatusMessage(), test.getStatusMessage());
     }
     
     @Test
