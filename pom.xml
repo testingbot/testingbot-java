@@ -39,7 +39,6 @@
     </scm>
     <properties>
         <junit.version>4.12</junit.version>
-        <additionalparam>-Xdoclint:none</additionalparam>
     </properties>
     <distributionManagement>
         <snapshotRepository>
@@ -53,6 +52,17 @@
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
+    <profiles>
+      <profile>
+        <id>JDK 8 Build</id>
+        <activation>
+          <jdk>[1.8,)</jdk>
+        </activation>
+        <properties>
+          <additionalparam>-Xdoclint:none</additionalparam>
+        </properties>
+      </profile>
+    </profiles>
     <dependencies>
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
