@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.testingbot</groupId>
     <artifactId>testingbotrest</artifactId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.0.2</version>
     <name>testingbotrest</name>
     <description>Java library which provides helper methods for invoking the TestingBot REST API</description>
     <url>https://testingbot.com</url>
@@ -35,7 +35,7 @@
         <connection>scm:git:git://github.com/testingbot/testingbot-java.git</connection>
         <developerConnection>scm:git:git@github.com:testingbot/testingbot-java.git</developerConnection>
         <url>git@github.com:testingbot/testingbot-java.git</url>
-        <tag>HEAD</tag>
+        <tag>testingbotrest-1.0.2</tag>
     </scm>
     <properties>
         <junit.version>4.12</junit.version>
