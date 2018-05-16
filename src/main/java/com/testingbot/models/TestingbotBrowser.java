@@ -6,6 +6,7 @@ public class TestingbotBrowser {
     private String name;
     private String platform;
     @SerializedName("browser_id") private int id;
+    @SerializedName("long_version") private String longVersion;
     private String version;
     private String deviceName;
     private String platformName;
@@ -92,5 +93,19 @@ public class TestingbotBrowser {
      */
     public void setPlatformName(String platformName) {
         this.platformName = platformName;
+    }
+
+    /**
+     * @return the longVersion
+     */
+    public String getLongVersion() {
+        return longVersion;
+    }
+
+    /**
+     * @param longVersion the longVersion to set
+     */
+    public void setLongVersion(String longVersion) {
+        this.longVersion = longVersion;
     }
 }

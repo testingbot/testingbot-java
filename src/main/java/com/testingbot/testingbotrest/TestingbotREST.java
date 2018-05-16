@@ -283,8 +283,9 @@ public class TestingbotREST {
     /**
      * Get latest tests
      *
-     * @param int offset
-     * @param int count
+     * @param offset
+     * @param count
+     * @return TestingbotTestCollection
      */
     public TestingbotTestCollection getTests(int offset, int count) {
         try {
@@ -614,6 +615,6 @@ public class TestingbotREST {
     }
     
     private String getUserAgent() {
-        return "TestingBotRest/1.0";
+        return "TestingBotRest/1.1";
     }
 }

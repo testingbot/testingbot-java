@@ -1,6 +1,8 @@
 package com.testingbot.models;
 
 import com.google.gson.annotations.SerializedName;
+import java.util.ArrayList;
+import java.util.Map;
 
 public class TestingbotTest {
     @SerializedName("created_at") private String createdDate;
@@ -16,6 +18,11 @@ public class TestingbotTest {
     private String os;
     private int duration;
     private String build;
+    private String video;
+    private ArrayList<String> thumbs;
+    private Map<String, String> logs;
+    private ArrayList<String> groups;
+    private String type;
 
     /**
      * @return the createdDate
@@ -197,5 +204,75 @@ public class TestingbotTest {
      */
     public void setBuild(String build) {
         this.build = build;
+    }
+
+    /**
+     * @return the groups
+     */
+    public ArrayList<String> getGroups() {
+        return groups;
+    }
+
+    /**
+     * @param groups the groups to set
+     */
+    public void setGroups(ArrayList<String> groups) {
+        this.groups = groups;
+    }
+
+    /**
+     * @return the type
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * @param type the type to set
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    /**
+     * @return the video
+     */
+    public String getVideo() {
+        return video;
+    }
+
+    /**
+     * @param video the video to set
+     */
+    public void setVideo(String video) {
+        this.video = video;
+    }
+
+    /**
+     * @return the thumbs
+     */
+    public ArrayList<String> getThumbs() {
+        return thumbs;
+    }
+
+    /**
+     * @param thumbs the thumbs to set
+     */
+    public void setThumbs(ArrayList<String> thumbs) {
+        this.thumbs = thumbs;
+    }
+
+    /**
+     * @return the logs
+     */
+    public Map<String, String> getLogs() {
+        return logs;
+    }
+
+    /**
+     * @param logs the logs to set
+     */
+    public void setLogs(Map<String, String> logs) {
+        this.logs = logs;
     }
 }

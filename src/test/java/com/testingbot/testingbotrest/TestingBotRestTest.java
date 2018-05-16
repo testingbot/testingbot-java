@@ -7,6 +7,7 @@ import com.testingbot.models.TestingbotTunnel;
 import com.testingbot.models.TestingbotUser;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import junit.framework.TestCase;
 import static org.junit.Assert.assertNotEquals;
