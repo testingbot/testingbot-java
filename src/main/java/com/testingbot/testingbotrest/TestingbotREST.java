@@ -113,7 +113,7 @@ public class TestingbotREST {
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
             for (Map.Entry<String, Object> entry : details.entrySet()) {
                 if (entry.getValue() != null) {
-                    nameValuePairs.add(new BasicNameValuePair("test[" + entry.getKey().toString() + "]", entry.getValue().toString()));
+                    nameValuePairs.add(new BasicNameValuePair("test[" + entry.getKey() + "]", entry.getValue().toString()));
                 }
             }
 
@@ -449,6 +449,7 @@ public class TestingbotREST {
      * Deletes a Tunnel with tunnel ID
      *
      * @param tunnelID The tunnelID of the tunnel to delete from TestingBot
+     * @return boolean
      */
     public boolean deleteTunnel(String tunnelID) {
         try {
@@ -494,6 +495,7 @@ public class TestingbotREST {
     /**
      * Gets tests for a specific build from TestingBot
      *
+     * @param buildIdentifier
      * @return response The API response
      */
     public TestingbotTestBuildCollection getTestsForBuild(String buildIdentifier) {
@@ -534,8 +536,9 @@ public class TestingbotREST {
     /**
      * Get test builds
      *
-     * @param int offset
-     * @param int count
+     * @param offset
+     * @param count
+     * @return TestingbotBuildCollection
      */
     public TestingbotBuildCollection getBuilds(int offset, int count) {
         try {
@@ -577,7 +580,7 @@ public class TestingbotREST {
      * Calculates the authentication hash for a specific identifier (sessionId/build-identifier)
      * https://testingbot.com/support/other/sharing
      * 
-     * @param String identifier
+     * @param identifier
      * @return String hash
      */
     public String getAuthenticationHash(String identifier) {

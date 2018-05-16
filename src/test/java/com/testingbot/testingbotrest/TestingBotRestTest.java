@@ -7,7 +7,6 @@ import com.testingbot.models.TestingbotTunnel;
 import com.testingbot.models.TestingbotUser;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 import junit.framework.TestCase;
 import static org.junit.Assert.assertNotEquals;
@@ -18,6 +17,7 @@ public class TestingBotRestTest extends TestCase {
     private TestingbotREST api;
     
     @Before
+    @Override
     public void setUp() throws Exception {
         this.api = new TestingbotREST(System.getenv("TB_KEY"), System.getenv("TB_SECRET"));
     }
