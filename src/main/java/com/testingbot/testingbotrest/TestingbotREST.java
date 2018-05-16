@@ -246,7 +246,7 @@ public class TestingbotREST {
     /**
      * Gets list of available browsers from TestingBot
      *
-     * @return ArrayList<TestingbotBrowser> The list of browsers
+     * @return 
      */
     public ArrayList<TestingbotBrowser> getBrowsers() {
         try {
