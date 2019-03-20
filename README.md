@@ -130,6 +130,51 @@ Deletes/stops a specific tunnel for the current user
 boolean success = restApi.deleteTunnel(String tunnelID);
 ```
 
+### uploadToStorage - Local File
+Uploads a local file to TestingBot Storage
+<https://testingbot.com/support/api#upload>
+
+
+```java
+TestingbotStorageUploadResponse uploadResponse = restApi.uploadToStorage(File file);
+```
+
+### uploadToStorage - Remote File
+Uploads a remote file to TestingBot Storage
+<https://testingbot.com/support/api#upload>
+
+
+```java
+TestingbotStorageUploadResponse uploadResponse = restApi.uploadToStorage(String fileUrl);
+```
+
+### getStorageFile
+Retrieves meta-data from a previously stored file
+<https://testingbot.com/support/api#uploadfile>
+
+
+```java
+TestingBotStorageFile storedFile = restApi.getStorageFile(String appUrl);
+```
+
+### getStorageFiles
+Retrieves meta-data from previously stored files
+<https://testingbot.com/support/api#filelist>
+
+
+```java
+TestingBotStorageFileCollection fileList = restApi.getStorageFiles(int offset, int count);
+```
+
+### deleteStorageFile
+Deletes a file previously stored in TestingBot Storage
+<https://testingbot.com/support/api#filedelete>
+
+
+```java
+boolean success = restApi.deleteStorageFile(String appUrl);
+```
+
 ### getAuthenticationHash
 Calculates the authenticationHash necessary to share tests
 <https://testingbot.com/support/other/sharing>
@@ -154,7 +199,7 @@ Maven
   <dependency>
     <groupId>com.testingbot</groupId>
     <artifactId>testingbotrest</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.4</version>
     <scope>test</scope>
   </dependency>
 </dependencies

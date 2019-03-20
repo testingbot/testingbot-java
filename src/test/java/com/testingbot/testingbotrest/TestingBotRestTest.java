@@ -1,10 +1,8 @@
 package com.testingbot.testingbotrest;
 
-import com.testingbot.models.TestingbotBrowser;
-import com.testingbot.models.TestingbotTest;
-import com.testingbot.models.TestingbotTestCollection;
-import com.testingbot.models.TestingbotTunnel;
-import com.testingbot.models.TestingbotUser;
+import com.testingbot.models.*;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
@@ -118,5 +116,40 @@ public class TestingBotRestTest extends TestCase {
     @Test
     public void testCalculateAuthentication() throws Exception {
         assertEquals(this.api.getAuthenticationHash("test"), "344ebf07233168c4882adf953a8a8c9b");
+    }
+
+    @Test
+    public void testUploadFileToStorage() throws Exception {
+        ClassLoader classLoader = getClass().getClassLoader();
+        File file = new File(classLoader.getResource("sample.apk").getFile());
+
+        TestingbotStorageUploadResponse response = this.api.uploadToStorage(file);
+        assertTrue(response.getAppUrl().length() > 0);
+    }
+
+    @Test
+    public void testUploadFileToStorageViaURL() throws Exception {
+        TestingbotStorageUploadResponse response = this.api.uploadToStorage("https://testingbot.com/appium/sample.apk");
+        assertTrue(response.getAppUrl().length() > 0);
+    }
+
+    @Test(expected = TestingbotApiException.class)
+    public void testUploadAndDelete() throws Exception {
+        ClassLoader classLoader = getClass().getClassLoader();
+        File file = new File(classLoader.getResource("sample.apk").getFile());
+
+        TestingbotStorageUploadResponse response = this.api.uploadToStorage(file);
+        assertTrue(response.getAppUrl().length() > 0);
+
+        TestingBotStorageFile fileData = this.api.getStorageFile(response.getAppUrl().replace("tb://", ""));
+        assertEquals(fileData.getAppUrl(), response.getAppUrl());
+
+        this.api.deleteStorageFile(response.getAppUrl().replace("tb://", ""));
+        try {
+            TestingBotStorageFile newFileData = this.api.getStorageFile(response.getAppUrl().replace("tb://", ""));
+            assertEquals(true, false);
+        } catch (TestingbotApiException e) {
+            assertEquals(true, true);
+        }
     }
 }
