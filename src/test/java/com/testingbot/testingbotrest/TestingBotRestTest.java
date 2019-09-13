@@ -5,6 +5,7 @@ import com.testingbot.models.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 import junit.framework.TestCase;
 import static org.junit.Assert.assertNotEquals;
@@ -99,6 +100,19 @@ public class TestingBotRestTest extends TestCase {
         TestingbotUser user = this.api.getUserInfo();
         assertNotNull(user);
         assertEquals(user.getLastName(), "bot");
+    }
+    
+    @Test
+    public void testGetDevices() throws Exception {
+        List<TestingbotDevice> devices = this.api.getDevices(0, 10);
+        assertNotNull(devices);
+        assertTrue(!devices.isEmpty());
+    }
+    
+    @Test
+    public void getGetDevice() throws Exception {
+        TestingbotDevice device = this.api.getDevice(1);
+        assertNotNull(device);
     }
     
     @Test

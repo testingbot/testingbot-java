@@ -79,7 +79,7 @@ public class TestingbotREST {
      *
      * @param test The meta-data to send to the TestingBot API in a
      * TestingBotTest class. See https://testingbot.com/support/api#updatetest
-     * @return boolean success response The API response
+     * @return Boolean success response The API response
      */
     public boolean updateTest(TestingbotTest test) {
         HashMap<String, Object> details = new HashMap<String, Object>();
@@ -97,7 +97,7 @@ public class TestingbotREST {
      * @param sessionID The sessionID retrieved from Selenium WebDriver/RC
      * @param details The meta-data to send to the TestingBot API. See
      * https://testingbot.com/support/api#updatetest
-     * @return boolean success response The API response
+     * @return Boolean success response The API response
      */
     public boolean updateTest(String sessionID, Map<String, Object> details) {
         try {
@@ -155,7 +155,7 @@ public class TestingbotREST {
      * Stops a Test with sessionID (Selenium sessionID)
      *
      * @param sessionID The sessionID retrieved from Selenium WebDriver/RC
-     * @return boolean response The API response
+     * @return Boolean response The API response
      */
     public boolean stopTest(String sessionID) {
         try {
@@ -199,7 +199,7 @@ public class TestingbotREST {
      * Deletes a Test with sessionID (Selenium sessionID)
      *
      * @param sessionID The sessionID of the test to delete from TestingBot
-     * @return boolean success
+     * @return Boolean success
      */
     public boolean deleteTest(String sessionID) {
         try {
@@ -755,12 +755,145 @@ public class TestingbotREST {
             throw new TestingbotApiException(ex.getMessage());
         }
     }
+    
+    /**
+     * Retrieves available Real Mobile Devices on TestingBot
+     *
+     * @param offset
+     * @param count
+     * @return List<TestingbotDevice> devices
+     */
+    public List<TestingbotDevice> getAvailableDevices(int offset, int count) {
+        try {
+            HttpClient httpClient = HttpClientBuilder.create().build();
+            String userpass = this.key + ":" + this.secret;
+            String encoding = Base64.encodeBytes(userpass.getBytes("UTF-8"));
+
+            HttpGet getRequest = new HttpGet("https://api.testingbot.com/v1/devices/available/?offset=" + offset + "&count=" + count);
+            getRequest.setHeader("Authorization", "Basic " + encoding);
+            getRequest.setHeader("User-Agent", getUserAgent());
+
+            HttpResponse response = httpClient.execute(getRequest);
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader((response.getEntity().getContent()), "UTF8"));
+            String output;
+            StringBuilder sb = new StringBuilder();
+            while ((output = br.readLine()) != null) {
+                sb.append(output);
+            }
+
+            if (response.getStatusLine().getStatusCode() > 200) {
+                if (response.getStatusLine().getStatusCode() == 401) {
+                    throw new TestingbotUnauthorizedException();
+                }
+                throw new TestingbotApiException(sb.toString());
+            }
+
+            Type listType = new TypeToken<ArrayList<TestingbotDevice>>(){}.getType();
+
+            return gson.fromJson(sb.toString(), listType);
+        } catch (ProtocolException ex) {
+            throw new TestingbotApiException(ex.getMessage());
+        } catch (IOException ex) {
+            throw new TestingbotApiException(ex.getMessage());
+        } catch (JSONException ex) {
+            throw new TestingbotApiException(ex.getMessage());
+        }
+    }
+    
+    /**
+     * Retrieves Real Mobile Devices on TestingBot
+     * This includes devices not currently available
+     *
+     * @param offset
+     * @param count
+     * @return List<TestingbotDevice> devices
+     */
+    public List<TestingbotDevice> getDevices(int offset, int count) {
+        try {
+            HttpClient httpClient = HttpClientBuilder.create().build();
+            String userpass = this.key + ":" + this.secret;
+            String encoding = Base64.encodeBytes(userpass.getBytes("UTF-8"));
+
+            HttpGet getRequest = new HttpGet("https://api.testingbot.com/v1/devices/?offset=" + offset + "&count=" + count);
+            getRequest.setHeader("Authorization", "Basic " + encoding);
+            getRequest.setHeader("User-Agent", getUserAgent());
+
+            HttpResponse response = httpClient.execute(getRequest);
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader((response.getEntity().getContent()), "UTF8"));
+            String output;
+            StringBuilder sb = new StringBuilder();
+            while ((output = br.readLine()) != null) {
+                sb.append(output);
+            }
+
+            if (response.getStatusLine().getStatusCode() > 200) {
+                if (response.getStatusLine().getStatusCode() == 401) {
+                    throw new TestingbotUnauthorizedException();
+                }
+                throw new TestingbotApiException(sb.toString());
+            }
+
+            Type listType = new TypeToken<ArrayList<TestingbotDevice>>(){}.getType();
+
+            return gson.fromJson(sb.toString(), listType);
+        } catch (ProtocolException ex) {
+            throw new TestingbotApiException(ex.getMessage());
+        } catch (IOException ex) {
+            throw new TestingbotApiException(ex.getMessage());
+        } catch (JSONException ex) {
+            throw new TestingbotApiException(ex.getMessage());
+        }
+    }
+    
+    /**
+     * Retrieves Real Mobile Devices on TestingBot
+     *
+     * @param id - Id of the Device
+     * @return TestingbotDevice device
+     */
+    public TestingbotDevice getDevice(int deviceId) {
+        try {
+            HttpClient httpClient = HttpClientBuilder.create().build();
+            String userpass = this.key + ":" + this.secret;
+            String encoding = Base64.encodeBytes(userpass.getBytes("UTF-8"));
+
+            HttpGet getRequest = new HttpGet("https://api.testingbot.com/v1/devices/" + deviceId);
+            getRequest.setHeader("Authorization", "Basic " + encoding);
+            getRequest.setHeader("User-Agent", getUserAgent());
+
+            HttpResponse response = httpClient.execute(getRequest);
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader((response.getEntity().getContent()), "UTF8"));
+            String output;
+            StringBuilder sb = new StringBuilder();
+            while ((output = br.readLine()) != null) {
+                sb.append(output);
+            }
+
+            if (response.getStatusLine().getStatusCode() > 200) {
+                if (response.getStatusLine().getStatusCode() == 401) {
+                    throw new TestingbotUnauthorizedException();
+                }
+                throw new TestingbotApiException(sb.toString());
+            }
+
+            return gson.fromJson(sb.toString(), TestingbotDevice.class);
+        } catch (ProtocolException ex) {
+            throw new TestingbotApiException(ex.getMessage());
+        } catch (IOException ex) {
+            throw new TestingbotApiException(ex.getMessage());
+        } catch (JSONException ex) {
+            throw new TestingbotApiException(ex.getMessage());
+        }
+    }
 
     /**
      * Delete a file previously uploaded TestingBot Storage
      *
      * @param appUrl of the file
-     * @return boolean success
+     * @return Boolean success
      */
     public boolean deleteStorageFile(String appUrl) {
         try {
