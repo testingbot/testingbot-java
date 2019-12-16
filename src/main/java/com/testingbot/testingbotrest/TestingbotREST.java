@@ -403,6 +403,61 @@ public class TestingbotREST {
         }
         return null;
     }
+    
+    /**
+     * Updates information for a TestingBot User
+     *
+     * @param testingbotUser
+     * @return boolean success
+     */
+    public boolean updateUserInfo(TestingbotUser testingbotUser) {
+        try {
+            HttpClient httpClient = HttpClientBuilder.create().build();
+            String userpass = this.key + ":" + this.secret;
+            String encoding = Base64.encodeBytes(userpass.getBytes("UTF-8"));
+
+            HttpPut putRequest = new HttpPut("https://api.testingbot.com/v1/user/");
+            putRequest.setHeader("Authorization", "Basic " + encoding);
+            putRequest.setHeader("User-Agent", getUserAgent());
+
+            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+            nameValuePairs.add(new BasicNameValuePair("user[first_name]", testingbotUser.getFirstName()));
+            nameValuePairs.add(new BasicNameValuePair("user[last_name]", testingbotUser.getLastName()));
+            
+            putRequest.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+            HttpResponse response = httpClient.execute(putRequest);
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader((response.getEntity().getContent()), "UTF8"));
+            String output;
+            StringBuilder sb = new StringBuilder();
+            while ((output = br.readLine()) != null) {
+                sb.append(output);
+            }
+
+            String payload = sb.toString();
+
+            if (response.getStatusLine().getStatusCode() > 200) {
+                if (response.getStatusLine().getStatusCode() == 401) {
+                    throw new TestingbotUnauthorizedException();
+                }
+                throw new TestingbotApiException(payload);
+            }
+
+            JSONObject json = new JSONObject(payload);
+
+            return json.getBoolean("success");
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        } catch (JSONException ex) {
+            Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        } catch (IOException ex) {
+            Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
 
     /**
      * Gets assigned tunnels for your account on TestingBot
@@ -573,6 +628,53 @@ public class TestingbotREST {
             Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, ex);
             return new TestingbotBuildCollection();
         }
+    }
+    
+    /**
+     * Delete a specific build
+     *
+     * @param buildId
+     * @return boolean
+     */
+    public boolean deleteBuild(String buildId) {
+        try {
+            URL url = new URL("https://api.testingbot.com/v1/builds/" + buildId);
+            HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
+            httpCon.setDoOutput(true);
+            String userpass = this.key + ":" + this.secret;
+            String auth = Base64.encodeBytes(userpass.getBytes("UTF-8"));
+            httpCon.setRequestProperty("Authorization", auth);
+            httpCon.setRequestProperty(
+                    "Content-Type", "application/x-www-form-urlencoded");
+            httpCon.setRequestProperty(
+                    "User-Agent", getUserAgent());
+            httpCon.setRequestMethod("DELETE");
+            httpCon.connect();
+            httpCon.getInputStream();
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(httpCon.getInputStream(), "UTF8"));
+            String output;
+            StringBuilder sb = new StringBuilder();
+            while ((output = br.readLine()) != null) {
+                sb.append(output);
+            }
+            if (httpCon.getResponseCode() > 200) {
+                if (httpCon.getResponseCode() == 401) {
+                    throw new TestingbotUnauthorizedException();
+                }
+                throw new TestingbotApiException(sb.toString());
+            }
+            
+            JSONObject json = new JSONObject(sb.toString());
+            return json.getBoolean("success");
+        } catch (ProtocolException ex) {
+            Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JSONException ex) {
+            Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
 
     /**
@@ -850,7 +952,7 @@ public class TestingbotREST {
     /**
      * Retrieves Real Mobile Devices on TestingBot
      *
-     * @param id - Id of the Device
+     * @param deviceId - Id of the Device
      * @return TestingbotDevice device
      */
     public TestingbotDevice getDevice(int deviceId) {

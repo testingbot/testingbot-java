@@ -79,6 +79,7 @@ public class TestingBotRestTest extends TestCase {
     @Test
     public void testGetTests() throws Exception {
         TestingbotTestCollection tests = this.api.getTests(0, 10);
+        System.out.println(tests.getData().get(0).getSessionId());
         assertNotNull(tests.getData());
         assertEquals(tests.getData().size(), 10);
     }

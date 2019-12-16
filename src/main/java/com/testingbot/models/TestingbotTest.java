@@ -275,4 +275,8 @@ public class TestingbotTest {
     public void setLogs(Map<String, String> logs) {
         this.logs = logs;
     }
+
+    public String toString() {
+        return "TestingBotTest - ID=" + sessionId;
+    }
 }

@@ -112,6 +112,15 @@ Retrieves information about the current user
 TestingbotUser user = restApi.getUserInfo();
 ```
 
+### updateUserConfig
+Updates information about the current user
+<https://testingbot.com/support/api#useredit>
+
+
+```java
+TestingbotUser user = restApi.updateUserInfo(TestingBotUser);
+```
+
 ### getTunnels
 Retrieves tunnels for the current user
 <https://testingbot.com/support/api#apitunnellist>
