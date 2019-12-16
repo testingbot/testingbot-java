@@ -208,7 +208,7 @@ Maven
   <dependency>
     <groupId>com.testingbot</groupId>
     <artifactId>testingbotrest</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.6</version>
     <scope>test</scope>
   </dependency>
 </dependencies
