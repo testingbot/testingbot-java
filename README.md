@@ -31,7 +31,34 @@ Retrieves collection of available browsers
 
 
 ```java
-ArrayList<TestingbotBrowser> browsers = restApi.getBrowsers();
+ArrayList<TestingbotBrowser> devices = restApi.getBrowsers();
+```
+
+### getDevices
+Retrieves collection of available devices
+<https://testingbot.com/support/api#devices>
+
+
+```java
+ArrayList<TestingbotDevice> devices = restApi.getDevices();
+```
+
+### getAvailableDevices
+Retrieves collection of available devices
+<https://testingbot.com/support/api#available-devices>
+
+
+```java
+ArrayList<TestingbotDevice> devices = restApi.getAvailableDevices();
+```
+
+### getDevice
+Retrieves information for a specific device
+<https://testingbot.com/support/api#devicedetails>
+
+
+```java
+TestingbotDevice device = restApi.getDevice(int deviceId);
 ```
 
 ### updateTest
@@ -208,7 +235,7 @@ Maven
   <dependency>
     <groupId>com.testingbot</groupId>
     <artifactId>testingbotrest</artifactId>
-    <version>1.0.6</version>
+    <version>1.0.7</version>
     <scope>test</scope>
   </dependency>
 </dependencies
