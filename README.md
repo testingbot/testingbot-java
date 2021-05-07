@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/testingbot/testingbot-java.svg?branch=master)](https://travis-ci.org/testingbot/testingbot-java)
-
 TestingBotREST Java
 ====================
 
