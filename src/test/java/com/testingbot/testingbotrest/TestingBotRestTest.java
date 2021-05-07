@@ -117,12 +117,6 @@ public class TestingBotRestTest extends TestCase {
     }
     
     @Test
-    public void testGetTunnels() throws Exception {
-        ArrayList<TestingbotTunnel> tunnels = this.api.getTunnels();
-        assertEquals(tunnels.size(), 0);
-    }
-    
-    @Test
     public void testGetBrowsers() throws Exception {
         ArrayList<TestingbotBrowser> browsers = this.api.getBrowsers();
         assertEquals(browsers.size() > 0, true);
