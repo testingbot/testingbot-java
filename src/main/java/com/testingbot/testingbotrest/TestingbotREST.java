@@ -3,6 +3,7 @@ package com.testingbot.testingbotrest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.testingbot.BuildUtils;
 import com.testingbot.models.*;
 
 import java.io.*;
@@ -1089,6 +1090,6 @@ public class TestingbotREST {
     }
     
     private String getUserAgent() {
-        return "TestingBotRest/1.1";
+        return "TestingBotRest/" + BuildUtils.getCurrentVersion();
     }
 }

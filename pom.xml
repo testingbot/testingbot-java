@@ -110,6 +110,27 @@
     <build>
         <plugins>
             <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <tasks>
+                                <filterset id="filters">
+                                    <filter token="VERSION" value="${project.version}" />
+                                </filterset>
+                                <copy preservelastmodified="true" file="./src/main/java/com/testingbot/resources/BuildUtils.template" tofile="./src/main/java/com/testingbot/BuildUtils.java" overwrite="true">
+                                    <filterset refid="filters" />
+                                </copy>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
                 <version>1.6.12</version>
