@@ -2,7 +2,9 @@ package com.testingbot.models;
 
 import com.google.gson.annotations.SerializedName;
 
-public class TestingbotDevice {
+import java.io.Serializable;
+
+public class TestingbotDevice implements Serializable {
     private int id;
     private String resolution;
     private String cpu;

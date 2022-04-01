@@ -2,7 +2,9 @@ package com.testingbot.models;
 
 import com.google.gson.annotations.SerializedName;
 
-public class TestingbotBuild {
+import java.io.Serializable;
+
+public class TestingbotBuild implements Serializable {
     private int id;
     @SerializedName("build_identifier") private String buildIdentifier;
     private String createdAtDate;

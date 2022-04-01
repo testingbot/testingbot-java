@@ -2,7 +2,9 @@ package com.testingbot.models;
 
 import com.google.gson.annotations.SerializedName;
 
-public class TestingbotUser {
+import java.io.Serializable;
+
+public class TestingbotUser implements Serializable {
    @SerializedName("first_name") private String firstName;
    @SerializedName("last_name") private String lastName;
    private int seconds;

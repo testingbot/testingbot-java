@@ -1,9 +1,10 @@
 package com.testingbot.models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class TestingbotBuildCollection {
+public class TestingbotBuildCollection implements Serializable {
     private ArrayList<TestingbotBuild> data = new ArrayList();
     private HashMap<String, Integer> meta = new HashMap<String, Integer>();
 

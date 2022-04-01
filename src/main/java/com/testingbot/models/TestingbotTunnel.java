@@ -2,7 +2,9 @@ package com.testingbot.models;
 
 import com.google.gson.annotations.SerializedName;
 
-public class TestingbotTunnel {
+import java.io.Serializable;
+
+public class TestingbotTunnel implements Serializable {
     private String ip;
     @SerializedName("private_ip") private String privateIp;
     private String state;

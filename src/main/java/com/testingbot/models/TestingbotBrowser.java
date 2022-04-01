@@ -2,7 +2,9 @@ package com.testingbot.models;
 
 import com.google.gson.annotations.SerializedName;
 
-public class TestingbotBrowser {
+import java.io.Serializable;
+
+public class TestingbotBrowser implements Serializable {
     private String name;
     private String platform;
     @SerializedName("browser_id") private int id;

@@ -1,10 +1,12 @@
 package com.testingbot.models;
 
 import com.google.gson.annotations.SerializedName;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class TestingbotTest {
+public class TestingbotTest implements Serializable {
     @SerializedName("created_at") private String createdDate;
     @SerializedName("completed_at") private String completedDate;
     private String extra;

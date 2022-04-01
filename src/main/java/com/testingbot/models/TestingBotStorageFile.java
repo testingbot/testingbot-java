@@ -2,7 +2,9 @@ package com.testingbot.models;
 
 import com.google.gson.annotations.SerializedName;
 
-public class TestingBotStorageFile {
+import java.io.Serializable;
+
+public class TestingBotStorageFile implements Serializable {
     private int id;
     @SerializedName("app_url") private String appUrl;
     private String url;
