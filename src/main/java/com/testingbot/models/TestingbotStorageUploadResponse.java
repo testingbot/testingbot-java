@@ -8,6 +8,7 @@ import java.util.HashMap;
 
 
 public class TestingbotStorageUploadResponse implements Serializable {
+    private static final long serialVersionUID = 1L;
     @SerializedName("app_url") private String appUrl;
 
     public String getAppUrl() {

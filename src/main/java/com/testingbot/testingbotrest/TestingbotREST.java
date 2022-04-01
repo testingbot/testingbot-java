@@ -6,6 +6,7 @@ import com.google.gson.reflect.TypeToken;
 import com.testingbot.models.*;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,6 +25,7 @@ import java.util.HashMap;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.HttpMultipartMode;
@@ -493,9 +495,15 @@ public class TestingbotREST {
             Type listType = new TypeToken<ArrayList<TestingbotTunnel>>(){}.getType();
 
             return gson.fromJson(sb.toString(), listType);
-        } catch (Exception ex) {
+        } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, ex);
-            return new ArrayList<TestingbotTunnel>();
+            return new ArrayList<>();
+        } catch (ClientProtocolException e) {
+            Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, e);
+            return new ArrayList<>();
+        } catch (IOException e) {
+            Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, e);
+            return new ArrayList<>();
         }
     }
 
@@ -1050,7 +1058,7 @@ public class TestingbotREST {
         try {
             MessageDigest m=MessageDigest.getInstance("MD5");
             String s = this.key + ":" + this.secret + ":" + identifier;
-            m.update(s.getBytes(), 0, s.length());
+            m.update(s.getBytes(StandardCharsets.UTF_8), 0, s.length());
             String md5 = new BigInteger(1, m.digest()).toString(16);
             return md5;
         } catch (NoSuchAlgorithmException ex) {
@@ -1070,7 +1078,7 @@ public class TestingbotREST {
         try {
             MessageDigest m=MessageDigest.getInstance("MD5");
             String s = this.key + ":" + this.secret;
-            m.update(s.getBytes(), 0, s.length());
+            m.update(s.getBytes(StandardCharsets.UTF_8), 0, s.length());
             String md5 = new BigInteger(1, m.digest()).toString(16);
             return md5;
         } catch (NoSuchAlgorithmException ex) {

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TestingBotStorageFileCollection implements Serializable {
+    private static final long serialVersionUID = 1L;
     private ArrayList<TestingBotStorageFile> data = new ArrayList();
     private HashMap<String, Integer> meta = new HashMap<String, Integer>();
 

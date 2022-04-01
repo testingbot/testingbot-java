@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 
 public class TestingbotTunnel implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String ip;
     @SerializedName("private_ip") private String privateIp;
     private String state;

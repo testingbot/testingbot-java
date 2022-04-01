@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 
 public class TestingbotTestCollection implements Serializable {
+   private static final long serialVersionUID = 1L;
    private ArrayList<TestingbotTest> data = new ArrayList();
    private HashMap<String, Integer> meta = new HashMap<String, Integer>();
 

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class TestingbotTest implements Serializable {
+    private static final long serialVersionUID = 1L;
     @SerializedName("created_at") private String createdDate;
     @SerializedName("completed_at") private String completedDate;
     private String extra;

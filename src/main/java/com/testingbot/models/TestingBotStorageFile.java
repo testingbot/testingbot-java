@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 
 public class TestingBotStorageFile implements Serializable {
+    private static final long serialVersionUID = 1L;
     private int id;
     @SerializedName("app_url") private String appUrl;
     private String url;

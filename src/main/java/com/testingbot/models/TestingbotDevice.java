@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 
 public class TestingbotDevice implements Serializable {
+    private static final long serialVersionUID = 1L;
     private int id;
     private String resolution;
     private String cpu;
