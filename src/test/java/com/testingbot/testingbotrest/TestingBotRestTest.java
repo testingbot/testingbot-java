@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.UUID;
 import junit.framework.TestCase;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertThat;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -100,6 +102,7 @@ public class TestingBotRestTest extends TestCase {
     public void testGetUser() throws Exception {
         TestingbotUser user = this.api.getUserInfo();
         assertNotNull(user);
+        assertTrue(user instanceof TestingbotUser);
         assertEquals(user.getLastName(), "bot");
     }
     
@@ -114,6 +117,7 @@ public class TestingBotRestTest extends TestCase {
     public void getGetDevice() throws Exception {
         TestingbotDevice device = this.api.getDevice(1);
         assertNotNull(device);
+        assertTrue(device instanceof TestingbotDevice);
     }
     
     @Test
