@@ -3,166 +3,168 @@ package com.testingbot.testingbotrest;
 import com.testingbot.models.*;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
-import junit.framework.TestCase;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertThat;
+import java.util.*;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
 
-public class TestingBotRestTest extends TestCase {
+import static org.junit.Assert.*;
+
+public class TestingBotRestTest {
     private TestingbotREST api;
     
     @Before
-    @Override
-    public void setUp() throws Exception {
+    public void setUp() {
         this.api = new TestingbotREST(System.getenv("TB_KEY"), System.getenv("TB_SECRET"));
     }
     
     @Test
-    public void testUpdateTest() throws Exception {
+    public void testUpdateTest() {
         String sessionID = "6344353dcee24694bf39d5ee5e6e5b11";
         TestingbotTest test = this.api.getTest(sessionID);
         String randomMessage = UUID.randomUUID().toString();
-        HashMap<String, Object> details = new HashMap<String, Object>();
+        HashMap<String, Object> details = new HashMap<>();
         details.put("success", true);
         details.put("status_message", randomMessage);
+        ArrayList<String> groups = new ArrayList<>();
+        groups.add("group1");
+        details.put("groups", groups);
         boolean success = this.api.updateTest(sessionID, details);
-        assertEquals(success, true);
+        assertTrue(success);
         TestingbotTest newTest = this.api.getTest(sessionID);
         assertNotEquals(newTest.getStatusMessage(), test.getStatusMessage());
+        assertThat(newTest.getGroups(), hasItem("group1"));
     }
     
     @Test
-    public void testUpdateTestViaObject() throws Exception {
+    public void testUpdateTestViaObject() {
         TestingbotTest test = this.api.getTest("6344353dcee24694bf39d5ee5e6e5b11");
         TestingbotTest obj = new TestingbotTest();
         obj.setSessionId("6344353dcee24694bf39d5ee5e6e5b11");
         obj.setStatusMessage(UUID.randomUUID().toString());
+        ArrayList<String> groups = new ArrayList<>();
+        groups.add("group2");
+        groups.add("group3");
+        obj.setGroups(groups);
         boolean success = this.api.updateTest(obj);
-        assertEquals(success, true);
+        assertTrue(success);
         TestingbotTest newTest = this.api.getTest(obj.getSessionId());
         assertNotEquals(newTest.getStatusMessage(), test.getStatusMessage());
     }
     
     @Test
-    public void testGetTest() throws Exception {
+    public void testGetTest() {
         String sessionID = "6344353dcee24694bf39d5ee5e6e5b11";
         TestingbotTest test = this.api.getTest(sessionID);
         assertNotNull(test);
-        assertEquals(test.getSessionId(), sessionID);
+        Assert.assertEquals(test.getSessionId(), sessionID);
     }
     
     @Test
-    public void testUnknownTest() throws Exception {
+    public void testUnknownTest() {
         try {
             String sessionID = "unknown";
-            TestingbotTest test = this.api.getTest(sessionID);
-            assertEquals(true, false);
+            this.api.getTest(sessionID);
+            Assert.fail();
         } catch (TestingbotApiException e) {
-            assertEquals(true, true);
+            assertTrue(true);
         }
     }
     
     @Test
-    public void testDeleteUnknownTest() throws Exception {
+    public void testDeleteUnknownTest() {
         try {
-            boolean success = this.api.deleteTest("unknown");
-            assertEquals(true, false);
+            this.api.deleteTest("unknown");
+            Assert.fail();
         } catch (TestingbotApiException e) {
-            assertEquals(true, true);
+            assertTrue(true);
         }
     }
     
     @Test
-    public void testGetTests() throws Exception {
+    public void testGetTests() {
         TestingbotTestCollection tests = this.api.getTests(0, 10);
-        System.out.println(tests.getData().get(0).getSessionId());
         assertNotNull(tests.getData());
-        assertEquals(tests.getData().size(), 10);
+        Assert.assertEquals(tests.getData().size(), 10);
     }
     
     @Test
-    public void testUnauthorized() throws Exception {
-        HashMap<String, Object> details = new HashMap<String, Object>();
+    public void testUnauthorized() {
+        HashMap<String, Object> details = new HashMap<>();
         try {
             TestingbotREST apiUnknown = new TestingbotREST("unknown", "unknown");
             apiUnknown.updateTest("unknown", details);
-            assertEquals(true, false);
+            Assert.fail();
         } catch (TestingbotUnauthorizedException e) {
-            assertEquals(true, true);
+            assertTrue(true);
         }
     }
     
     @Test
-    public void testGetUser() throws Exception {
+    public void testGetUser() {
         TestingbotUser user = this.api.getUserInfo();
         assertNotNull(user);
-        assertTrue(user instanceof TestingbotUser);
-        assertEquals(user.getLastName(), "bot");
+        Assert.assertEquals(user.getLastName(), "bot");
     }
     
     @Test
-    public void testGetDevices() throws Exception {
+    public void testGetDevices() {
         List<TestingbotDevice> devices = this.api.getDevices(0, 10);
         assertNotNull(devices);
-        assertTrue(!devices.isEmpty());
+        Assert.assertFalse(devices.isEmpty());
     }
     
     @Test
-    public void getGetDevice() throws Exception {
+    public void getGetDevice() {
         TestingbotDevice device = this.api.getDevice(1);
         assertNotNull(device);
-        assertTrue(device instanceof TestingbotDevice);
     }
     
     @Test
-    public void testGetBrowsers() throws Exception {
+    public void testGetBrowsers() {
         ArrayList<TestingbotBrowser> browsers = this.api.getBrowsers();
-        assertEquals(browsers.size() > 0, true);
+        assertTrue(browsers.size() > 0);
     }
     
     @Test
-    public void testCalculateAuthentication() throws Exception {
-        assertEquals(this.api.getAuthenticationHash("test"), "344ebf07233168c4882adf953a8a8c9b");
+    public void testCalculateAuthentication() {
+        Assert.assertEquals(this.api.getAuthenticationHash("test"), "344ebf07233168c4882adf953a8a8c9b");
     }
 
     @Test
-    public void testUploadFileToStorage() throws Exception {
+    public void testUploadFileToStorage() {
         ClassLoader classLoader = getClass().getClassLoader();
-        File file = new File(classLoader.getResource("sample.apk").getFile());
+        File file = new File(Objects.requireNonNull(classLoader.getResource("sample.apk")).getFile());
 
         TestingbotStorageUploadResponse response = this.api.uploadToStorage(file);
         assertTrue(response.getAppUrl().length() > 0);
     }
 
     @Test
-    public void testUploadFileToStorageViaURL() throws Exception {
+    public void testUploadFileToStorageViaURL() {
         TestingbotStorageUploadResponse response = this.api.uploadToStorage("https://testingbot.com/appium/sample.apk");
         assertTrue(response.getAppUrl().length() > 0);
     }
 
     @Test(expected = TestingbotApiException.class)
-    public void testUploadAndDelete() throws Exception {
+    public void testUploadAndDelete() {
         ClassLoader classLoader = getClass().getClassLoader();
-        File file = new File(classLoader.getResource("sample.apk").getFile());
+        File file = new File(Objects.requireNonNull(classLoader.getResource("sample.apk")).getFile());
 
         TestingbotStorageUploadResponse response = this.api.uploadToStorage(file);
         assertTrue(response.getAppUrl().length() > 0);
 
         TestingBotStorageFile fileData = this.api.getStorageFile(response.getAppUrl().replace("tb://", ""));
-        assertEquals(fileData.getAppUrl(), response.getAppUrl());
+        Assert.assertEquals(fileData.getAppUrl(), response.getAppUrl());
 
-        this.api.deleteStorageFile(response.getAppUrl().replace("tb://", ""));
-        try {
-            TestingBotStorageFile newFileData = this.api.getStorageFile(response.getAppUrl().replace("tb://", ""));
-            assertEquals(true, false);
-        } catch (TestingbotApiException e) {
-            assertEquals(true, true);
-        }
+        boolean successDelete = this.api.deleteStorageFile(response.getAppUrl().replace("tb://", ""));
+        assertTrue(successDelete);
+        this.api.getStorageFile(response.getAppUrl().replace("tb://", ""));
     }
 }

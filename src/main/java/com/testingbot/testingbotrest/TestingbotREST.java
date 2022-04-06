@@ -542,7 +542,11 @@ public class TestingbotREST {
             if (details != null) {
                 List<NameValuePair> nameValuePairs = new ArrayList<>(2);
                 for (Map.Entry<String, Object> entry : details.entrySet()) {
-                    if (entry.getValue() != null) {
+                    if (entry.getKey().equals("groups")) {
+                        for (int i = 0; i < ((List) entry.getValue()).size(); i++) {
+                            nameValuePairs.add(new BasicNameValuePair("groups[]", ((List) entry.getValue()).get(i).toString()));
+                        }
+                    } else if (entry.getValue() != null) {
                         nameValuePairs.add(new BasicNameValuePair("test[" + entry.getKey() + "]", entry.getValue().toString()));
                     }
                 }
