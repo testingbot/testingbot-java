@@ -1,3 +1,5 @@
+[![Maven](https://maven-badges.herokuapp.com/maven-central/com.testingbot/testingbotrest/badge.svg)](https://search.maven.org/artifact/com.testingbot/testingbotrest)
+
 TestingBotREST Java
 ====================
 
@@ -233,7 +235,7 @@ Maven
   <dependency>
     <groupId>com.testingbot</groupId>
     <artifactId>testingbotrest</artifactId>
-    <version>1.0.7</version>
+    <version>1.0.8</version>
     <scope>test</scope>
   </dependency>
 </dependencies
