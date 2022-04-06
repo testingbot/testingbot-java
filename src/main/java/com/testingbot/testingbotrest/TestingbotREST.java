@@ -17,9 +17,6 @@ import java.util.List;
 
 import java.lang.reflect.Type;
 import java.math.BigInteger;
-import java.net.HttpURLConnection;
-import java.net.ProtocolException;
-import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -130,7 +127,7 @@ public class TestingbotREST {
     /**
      * Gets list of available browsers from TestingBot
      *
-     * @return 
+     * @return ArrayList<TestingbotBrowser>
      */
     public ArrayList<TestingbotBrowser> getBrowsers() {
         return this.apiGet("https://api.testingbot.com/v1/browsers", TypeToken.getParameterized(ArrayList.class, TestingbotBrowser.class).getType());
@@ -139,8 +136,8 @@ public class TestingbotREST {
     /**
      * Get latest tests
      *
-     * @param offset
-     * @param count
+     * @param offset where to begin
+     * @param count number of tests
      * @return TestingbotTestCollection
      */
     public TestingbotTestCollection getTests(int offset, int count) {
@@ -151,7 +148,7 @@ public class TestingbotREST {
      * Gets information from TestingBot for a test with sessionID
      *
      * @param sessionID The sessionID retrieved from Selenium WebDriver/RC
-     * @return response The API response
+     * @return TestingbotTest
      */
     public TestingbotTest getTest(String sessionID) {
         return this.apiGet("https://api.testingbot.com/v1/tests/" + sessionID, new TypeToken<TestingbotTest>(){}.getType());
@@ -169,28 +166,29 @@ public class TestingbotREST {
     /**
      * Updates information for a TestingBot User
      *
-     * @param testingbotUser
+     * @param testingbotUser the user you are updating
      * @return boolean success
      */
     public boolean updateUserInfo(TestingbotUser testingbotUser) {
+        BufferedReader br = null;
         try {
             HttpClient httpClient = HttpClientBuilder.create().build();
             String userpass = this.key + ":" + this.secret;
-            String encoding = Base64.encodeBytes(userpass.getBytes("UTF-8"));
+            String encoding = Base64.encodeBytes(userpass.getBytes(StandardCharsets.UTF_8));
 
             HttpPut putRequest = new HttpPut("https://api.testingbot.com/v1/user/");
             putRequest.setHeader("Authorization", "Basic " + encoding);
             putRequest.setHeader("User-Agent", getUserAgent());
 
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+            List<NameValuePair> nameValuePairs = new ArrayList<>(2);
             nameValuePairs.add(new BasicNameValuePair("user[first_name]", testingbotUser.getFirstName()));
             nameValuePairs.add(new BasicNameValuePair("user[last_name]", testingbotUser.getLastName()));
             
             putRequest.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
             HttpResponse response = httpClient.execute(putRequest);
-            BufferedReader br = new BufferedReader(
-                    new InputStreamReader((response.getEntity().getContent()), "UTF8"));
+            br = new BufferedReader(
+                    new InputStreamReader((response.getEntity().getContent()), StandardCharsets.UTF_8));
             String output;
             StringBuilder sb = new StringBuilder();
             while ((output = br.readLine()) != null) {
@@ -209,15 +207,17 @@ public class TestingbotREST {
             JSONObject json = new JSONObject(payload);
 
             return json.getBoolean("success");
-        } catch (UnsupportedEncodingException ex) {
+        } catch (JSONException | IOException ex) {
             Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, ex);
             return false;
-        } catch (JSONException ex) {
-            Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
-        } catch (IOException ex) {
-            Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -243,7 +243,7 @@ public class TestingbotREST {
     /**
      * Gets tests for a specific build from TestingBot
      *
-     * @param buildIdentifier
+     * @param buildIdentifier the identifier (string) for the build
      * @return response The API response
      */
     public TestingbotTestBuildCollection getTestsForBuild(String buildIdentifier) {
@@ -253,8 +253,8 @@ public class TestingbotREST {
     /**
      * Get test builds
      *
-     * @param offset
-     * @param count
+     * @param offset where to begin
+     * @param count number of builds
      * @return TestingbotBuildCollection
      */
     public TestingbotBuildCollection getBuilds(int offset, int count) {
@@ -264,7 +264,7 @@ public class TestingbotREST {
     /**
      * Delete a specific build
      *
-     * @param buildId
+     * @param buildId the build identifier you want to delete
      * @return boolean
      */
     public boolean deleteBuild(String buildId) {
@@ -274,14 +274,15 @@ public class TestingbotREST {
     /**
      * Upload file to TestingBot Storage
      *
-     * @param file
+     * @param file The path to the local file you want to upload
      * @return TestingbotStorageUploadResponse
      */
     public TestingbotStorageUploadResponse uploadToStorage(File file) {
+        BufferedReader br = null;
         try {
             HttpClient httpClient = HttpClientBuilder.create().build();
             String userpass = this.key + ":" + this.secret;
-            String encoding = Base64.encodeBytes(userpass.getBytes("UTF-8"));
+            String encoding = Base64.encodeBytes(userpass.getBytes(StandardCharsets.UTF_8));
 
             HttpPost post = new HttpPost("https://api.testingbot.com/v1/storage");
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
@@ -295,8 +296,8 @@ public class TestingbotREST {
             post.setEntity(entity);
 
             HttpResponse response = httpClient.execute(post);
-            BufferedReader br = new BufferedReader(
-                    new InputStreamReader((response.getEntity().getContent()), "UTF8"));
+            br = new BufferedReader(
+                    new InputStreamReader((response.getEntity().getContent()), StandardCharsets.UTF_8));
             String output;
             StringBuilder sb = new StringBuilder();
             while ((output = br.readLine()) != null) {
@@ -311,12 +312,17 @@ public class TestingbotREST {
             }
 
             return gson.fromJson(sb.toString(), TestingbotStorageUploadResponse.class);
-        } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, ex);
-            return new TestingbotStorageUploadResponse();
         } catch (IOException ex) {
             Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, ex);
             return new TestingbotStorageUploadResponse();
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -327,23 +333,24 @@ public class TestingbotREST {
      * @return TestingbotStorageUploadResponse
      */
     public TestingbotStorageUploadResponse uploadToStorage(String url) {
+        BufferedReader br = null;
         try {
             HttpClient httpClient = HttpClientBuilder.create().build();
             String userpass = this.key + ":" + this.secret;
-            String encoding = Base64.encodeBytes(userpass.getBytes("UTF-8"));
+            String encoding = Base64.encodeBytes(userpass.getBytes(StandardCharsets.UTF_8));
 
             HttpPost post = new HttpPost("https://api.testingbot.com/v1/storage");
             post.setHeader("Authorization", "Basic " + encoding);
             post.setHeader("User-Agent", getUserAgent());
 
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+            List<NameValuePair> nameValuePairs = new ArrayList<>(1);
             nameValuePairs.add(new BasicNameValuePair("url", url));
 
             post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
             HttpResponse response = httpClient.execute(post);
-            BufferedReader br = new BufferedReader(
-                    new InputStreamReader((response.getEntity().getContent()), "UTF8"));
+            br = new BufferedReader(
+                    new InputStreamReader((response.getEntity().getContent()), StandardCharsets.UTF_8));
             String output;
             StringBuilder sb = new StringBuilder();
             while ((output = br.readLine()) != null) {
@@ -358,12 +365,17 @@ public class TestingbotREST {
             }
 
             return gson.fromJson(sb.toString(), TestingbotStorageUploadResponse.class);
-        } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, ex);
-            return new TestingbotStorageUploadResponse();
         } catch (IOException ex) {
             Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, ex);
             return new TestingbotStorageUploadResponse();
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -380,8 +392,8 @@ public class TestingbotREST {
     /**
      * Retrieves meta-data for TestingBot Storage files
      *
-     * @param offset
-     * @param count
+     * @param offset where to begin
+     * @param count number of files
      * @return TestingBotStorageFileCollection files
      */
     public TestingBotStorageFileCollection getStorageFiles(int offset, int count) {
@@ -391,8 +403,8 @@ public class TestingbotREST {
     /**
      * Retrieves available Real Mobile Devices on TestingBot
      *
-     * @param offset
-     * @param count
+     * @param offset where to begin
+     * @param count number of devices
      * @return List<TestingbotDevice> devices
      */
     public List<TestingbotDevice> getAvailableDevices(int offset, int count) {
@@ -403,8 +415,8 @@ public class TestingbotREST {
      * Retrieves Real Mobile Devices on TestingBot
      * This includes devices not currently available
      *
-     * @param offset
-     * @param count
+     * @param offset where to begin
+     * @param count number of real devices
      * @return List<TestingbotDevice> devices
      */
     public List<TestingbotDevice> getDevices(int offset, int count) {
@@ -414,7 +426,7 @@ public class TestingbotREST {
     /**
      * Retrieves Real Mobile Devices on TestingBot
      *
-     * @param deviceId - Id of the Device
+     * @param deviceId - id of the Device
      * @return TestingbotDevice device
      */
     public TestingbotDevice getDevice(int deviceId) {
@@ -425,7 +437,7 @@ public class TestingbotREST {
      * Delete a file previously uploaded TestingBot Storage
      *
      * @param appUrl of the file
-     * @return Boolean success
+     * @return boolean success
      */
     public boolean deleteStorageFile(String appUrl) {
         return this.apiDelete("https://api.testingbot.com/v1/storage/" + appUrl);
@@ -436,7 +448,7 @@ public class TestingbotREST {
      * Calculates the authentication hash for a specific identifier (sessionId/build-identifier)
      * https://testingbot.com/support/other/sharing
      * 
-     * @param identifier
+     * @param identifier the sessionId or buildIdentifier
      * @return String hash
      */
     public String getAuthenticationHash(String identifier) {
@@ -444,8 +456,7 @@ public class TestingbotREST {
             MessageDigest m = MessageDigest.getInstance("MD5");
             String s = this.key + ":" + this.secret + ":" + identifier;
             m.update(s.getBytes(StandardCharsets.UTF_8), 0, s.length());
-            String md5 = new BigInteger(1, m.digest()).toString(16);
-            return md5;
+            return new BigInteger(1, m.digest()).toString(16);
         } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -464,8 +475,7 @@ public class TestingbotREST {
             MessageDigest m = MessageDigest.getInstance("MD5");
             String s = this.key + ":" + this.secret;
             m.update(s.getBytes(StandardCharsets.UTF_8), 0, s.length());
-            String md5 = new BigInteger(1, m.digest()).toString(16);
-            return md5;
+            return new BigInteger(1, m.digest()).toString(16);
         } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -482,7 +492,7 @@ public class TestingbotREST {
         try {
             HttpClient httpClient = HttpClientBuilder.create().build();
             String userpass = this.key + ":" + this.secret;
-            String encoding = Base64.encodeBytes(userpass.getBytes("UTF-8"));
+            String encoding = Base64.encodeBytes(userpass.getBytes(StandardCharsets.UTF_8));
 
             HttpGet getRequest = new HttpGet(url);
             getRequest.setHeader("Authorization", "Basic " + encoding);
@@ -490,7 +500,7 @@ public class TestingbotREST {
 
             HttpResponse response = httpClient.execute(getRequest);
             br = new BufferedReader(
-                    new InputStreamReader((response.getEntity().getContent()), "UTF8"));
+                    new InputStreamReader((response.getEntity().getContent()), StandardCharsets.UTF_8));
             String output;
             StringBuilder sb = new StringBuilder();
             while ((output = br.readLine()) != null) {
@@ -505,11 +515,7 @@ public class TestingbotREST {
             }
 
             return gson.fromJson(sb.toString(), returnType);
-        } catch (ProtocolException ex) {
-            throw new TestingbotApiException(ex.getMessage());
-        } catch (IOException ex) {
-            throw new TestingbotApiException(ex.getMessage());
-        } catch (JSONException ex) {
+        } catch (IOException | JSONException ex) {
             throw new TestingbotApiException(ex.getMessage());
         } finally {
             if (br != null) {
@@ -523,6 +529,7 @@ public class TestingbotREST {
     }
 
     private boolean apiUpdate(String url, Map<String, Object> details) {
+        BufferedReader br = null;
         try {
             HttpClient httpClient = HttpClientBuilder.create().build();
             String userpass = this.key + ":" + this.secret;
@@ -544,7 +551,7 @@ public class TestingbotREST {
             }
 
             HttpResponse response = httpClient.execute(putRequest);
-            BufferedReader br = new BufferedReader(
+            br = new BufferedReader(
                     new InputStreamReader((response.getEntity().getContent()), StandardCharsets.UTF_8));
             String output;
             StringBuilder sb = new StringBuilder();
@@ -567,10 +574,19 @@ public class TestingbotREST {
         } catch (IOException | JSONException ex) {
             Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, ex);
             return false;
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
     private boolean apiDelete(String url) {
+        BufferedReader br = null;
         try {
             HttpClient httpClient = HttpClientBuilder.create().build();
             HttpDelete deleteRequest = new HttpDelete(url);
@@ -580,7 +596,7 @@ public class TestingbotREST {
             deleteRequest.setHeader("User-Agent", getUserAgent());
 
             HttpResponse response = httpClient.execute(deleteRequest);
-            BufferedReader br = new BufferedReader(
+            br = new BufferedReader(
                     new InputStreamReader((response.getEntity().getContent()), StandardCharsets.UTF_8));
             String output;
             StringBuilder sb = new StringBuilder();
@@ -603,6 +619,14 @@ public class TestingbotREST {
         } catch (IOException | JSONException ex) {
             Logger.getLogger(TestingbotREST.class.getName()).log(Level.SEVERE, null, ex);
             return false;
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }
