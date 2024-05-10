@@ -20,3 +20,5 @@ jobs:
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+          TB_KEY: ${{ secrets.TB_KEY }}
+          TB_SECRET: ${{ secrets.TB_SECRET }}
