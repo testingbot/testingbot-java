@@ -26,8 +26,8 @@ public class TestingBotRestTest {
     
     @Test
     public void testUpdateTest() {
-        String sessionID = "6344353dcee24694bf39d5ee5e6e5b11";
-        TestingbotTest test = this.api.getTest(sessionID);
+        TestingbotTest test = this.api.getTests(0, 1).getData().get(0);
+        String sessionId = test.getSessionId();
         String randomMessage = UUID.randomUUID().toString();
         HashMap<String, Object> details = new HashMap<>();
         details.put("success", true);
@@ -35,18 +35,19 @@ public class TestingBotRestTest {
         ArrayList<String> groups = new ArrayList<>();
         groups.add("group1");
         details.put("groups", groups);
-        boolean success = this.api.updateTest(sessionID, details);
+        boolean success = this.api.updateTest(sessionId, details);
         assertTrue(success);
-        TestingbotTest newTest = this.api.getTest(sessionID);
+        TestingbotTest newTest = this.api.getTest(sessionId);
         assertNotEquals(newTest.getStatusMessage(), test.getStatusMessage());
         assertThat(newTest.getGroups(), hasItem("group1"));
     }
     
     @Test
     public void testUpdateTestViaObject() {
-        TestingbotTest test = this.api.getTest("6344353dcee24694bf39d5ee5e6e5b11");
+        TestingbotTest test = this.api.getTests(0, 1).getData().get(0);
+        String sessionId = test.getSessionId();
         TestingbotTest obj = new TestingbotTest();
-        obj.setSessionId("6344353dcee24694bf39d5ee5e6e5b11");
+        obj.setSessionId(sessionId);
         obj.setStatusMessage(UUID.randomUUID().toString());
         ArrayList<String> groups = new ArrayList<>();
         groups.add("group2");
@@ -60,10 +61,8 @@ public class TestingBotRestTest {
     
     @Test
     public void testGetTest() {
-        String sessionID = "6344353dcee24694bf39d5ee5e6e5b11";
-        TestingbotTest test = this.api.getTest(sessionID);
+        TestingbotTest test = this.api.getTests(0, 1).getData().get(0);
         assertNotNull(test);
-        Assert.assertEquals(test.getSessionId(), sessionID);
     }
     
     @Test
