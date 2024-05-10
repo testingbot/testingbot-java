@@ -109,7 +109,7 @@ Retrieves a collection of tests
 
 
 ```java
-TestingbotTest test = restApi.getTests(int offset, int count);
+TestingbotTestCollection test = restApi.getTests(int offset, int count);
 ```
 
 ### getBuilds
