@@ -127,7 +127,7 @@ public class TestingbotREST {
     /**
      * Gets list of available browsers from TestingBot
      *
-     * @return ArrayList<TestingbotBrowser>
+     * @return ArrayList containing TestingbotBrowser objects.
      */
     public ArrayList<TestingbotBrowser> getBrowsers() {
         return this.apiGet("https://api.testingbot.com/v1/browsers", TypeToken.getParameterized(ArrayList.class, TestingbotBrowser.class).getType());
@@ -405,7 +405,7 @@ public class TestingbotREST {
      *
      * @param offset where to begin
      * @param count number of devices
-     * @return List<TestingbotDevice> devices
+     * @return List containing TestingbotDevice objects.
      */
     public List<TestingbotDevice> getAvailableDevices(int offset, int count) {
         return this.apiGet("https://api.testingbot.com/v1/devices/available/?offset=" + offset + "&count=" + count, TypeToken.getParameterized(List.class, TestingbotDevice.class).getType());
@@ -417,7 +417,7 @@ public class TestingbotREST {
      *
      * @param offset where to begin
      * @param count number of real devices
-     * @return List<TestingbotDevice> devices
+     * @return List containing TestingbotDevice objects.
      */
     public List<TestingbotDevice> getDevices(int offset, int count) {
         return this.apiGet("https://api.testingbot.com/v1/devices/?offset=" + offset + "&count=" + count, TypeToken.getParameterized(List.class, TestingbotDevice.class).getType());

@@ -13,7 +13,7 @@ jobs:
           distribution: 'adopt'
           java-version: '8'
       - name: Test
-        run: mvn install -Dmaven.javadoc.skip=true -Dgpg.skip=true -B -V
+        run: mvn install -Dgpg.skip=true -B -V
         env:
           TB_KEY: ${{ secrets.TB_KEY }}
           TB_SECRET: ${{ secrets.TB_SECRET }}

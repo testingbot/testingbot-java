@@ -4,6 +4,13 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
+/**
+ * Holds information about the TestingbotBrowser items that TestingBot provides
+ * You can find the list of browsers on
+ * <a href="https://testingbot.com/support/getting-started/browsers.html">https://testingbot.com/support/getting-started/browsers.html</a>.
+ *
+ * @author TestingBot
+ */
 public class TestingbotBrowser implements Serializable {
     private static final long serialVersionUID = 1L;
     private String name;
