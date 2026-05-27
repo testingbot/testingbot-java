@@ -220,8 +220,174 @@ Calculates the authenticationHash necessary to share tests
 String hash = restApi.getAuthenticationHash(String identifier);
 ```
 
+### Closing the client
+`TestingbotREST` holds a pooled HTTP client and implements `Closeable`. Call `close()` when you are done (or use try-with-resources) to release connections.
+
+```java
+try (TestingbotREST restApi = new TestingbotREST("key", "secret")) {
+    restApi.getUserInfo();
+}
+```
+
+Tests
+-----
+
+### getTests with filters
+Retrieves a collection of tests with optional server-side filters (`since`, `browser_id`, `group`, `build`, `skip_fields`).
+
+```java
+Map<String, String> filters = new HashMap<>();
+filters.put("group", "smoke");
+TestingbotTestCollection tests = restApi.getTests(int offset, int count, filters);
+```
+
+### createTest
+Creates a new test.
+
+```java
+boolean success = restApi.createTest(Map<String, Object> testFields);
+```
+
+Devices
+-------
+
+### getDevices with filters
+Retrieves devices filtered by platform (Android, iOS, REAL_ANDROID, REAL_IOS) and web capability.
+
+```java
+List<TestingbotDevice> devices = restApi.getDevices(String platform, Boolean web);
+```
+
+### getAvailableDevices
+Retrieves the currently available real devices.
+
+```java
+List<TestingbotDevice> devices = restApi.getAvailableDevices();
+```
+
+Tunnels
+-------
+
+### getTunnel
+Gets the currently active tunnel, or a specific tunnel by id.
+
+```java
+TestingbotTunnel tunnel = restApi.getTunnel();
+TestingbotTunnel tunnel = restApi.getTunnel(int tunnelId);
+```
+
+### createTunnel
+Boots a new tunnel.
+
+```java
+TestingbotTunnel tunnel = restApi.createTunnel();
+```
+
+### deleteTunnel / isTunnelAlive
+Stops the active tunnel, or checks whether the tunnel is alive.
+
+```java
+boolean success = restApi.deleteTunnel();
+boolean alive = restApi.isTunnelAlive();
+```
+
+Account & configuration
+-----------------------
+
+### getJob
+Gets the status of a job (e.g. a Codeless test run).
+
+```java
+TestingbotJob job = restApi.getJob(String jobId);
+```
+
+### getUserKeys / getIpRanges
+Retrieves your API keys, or the TestingBot IP ranges (raw JSON).
+
+```java
+com.google.gson.JsonElement keys = restApi.getUserKeys();
+com.google.gson.JsonElement ranges = restApi.getIpRanges();
+```
+
+Team management
+---------------
+
+```java
+TestingbotTeam team = restApi.getTeam();
+TestingbotTeamMemberCollection members = restApi.getTeamMembers();
+TestingbotTeamMember member = restApi.createTeamMember(Map<String, Object> params);
+TestingbotTeamMember member = restApi.getTeamMember(int userId);
+TestingbotTeamMember member = restApi.updateTeamMember(int userId, Map<String, Object> params);
+com.google.gson.JsonElement clientKey = restApi.getTeamMemberClientKey(int userId);
+TestingbotTeamCredentialReset reset = restApi.resetTeamMemberKeys(int userId);
+```
+
+Screenshots
+-----------
+
+```java
+TestingbotScreenshotCollection screenshots = restApi.getScreenshots();
+TestingbotScreenshot batch = restApi.createScreenshots(Map<String, Object> params); // url, resolution, browsers (List)
+TestingbotScreenshot batch = restApi.getScreenshot(int screenshotId);
+```
+
+Manual sessions
+---------------
+
+```java
+boolean success = restApi.updateManualSession(int sessionId, Map<String, Object> fields);
+boolean success = restApi.pingManualSession(List<Integer> sessionIds);
+```
+
+Codeless Lab
+------------
+
+```java
+TestingbotLabTestCollection labTests = restApi.getLabTests();
+TestingbotLabCreateAck created = restApi.createLabTest(Map<String, Object> testFields);
+TestingbotLabTest labTest = restApi.getLabTest(int labTestId);
+boolean success = restApi.updateLabTest(int labTestId, Map<String, Object> testFields);
+boolean success = restApi.deleteLabTest(int labTestId);
+TestingbotLabTestStepCollection steps = restApi.getLabTestSteps(int labTestId);
+boolean success = restApi.setLabTestSteps(int labTestId, List<String> steps);
+List<TestingbotBrowser> browsers = restApi.getLabTestBrowsers(int labTestId);
+boolean success = restApi.setLabTestBrowsers(int labTestId, String browserIds);
+TestingbotLabRunAck run = restApi.triggerLabTest(int labTestId);
+boolean success = restApi.stopLabTest(int labTestId);
+boolean success = restApi.addLabTestAlert(int labTestId, Map<String, Object> params); // kind, level, content
+boolean success = restApi.updateLabTestAlert(int labTestId, Map<String, Object> params);
+boolean success = restApi.createLabTestReport(int labTestId, Map<String, Object> params);
+boolean success = restApi.updateLabTestReport(int labTestId, Map<String, Object> params);
+boolean success = restApi.scheduleLabTest(int labTestId, Map<String, Object> params); // type, day, hour, cronFormat
+TestingbotLabRunAck run = restApi.triggerAllLabTests();
+```
+
+Codeless Lab suites
+-------------------
+
+```java
+TestingbotLabSuiteCollection suites = restApi.getLabSuites();
+TestingbotLabSuiteCreateAck created = restApi.createLabSuite(Map<String, Object> suiteFields);
+TestingbotLabSuite suite = restApi.getLabSuite(int suiteId);
+boolean success = restApi.deleteLabSuite(int suiteId);
+TestingbotLabTestCollection tests = restApi.getLabSuiteTests(int suiteId);
+boolean success = restApi.addLabSuiteTests(int suiteId, String testIds);
+boolean success = restApi.removeLabSuiteTest(int suiteId, int testId);
+List<TestingbotBrowser> browsers = restApi.getLabSuiteBrowsers(int suiteId);
+boolean success = restApi.setLabSuiteBrowsers(int suiteId, String browserIds);
+TestingbotLabRunAck run = restApi.triggerLabSuite(int suiteId);
+```
+
 Test
 -----
+
+`TestingbotRestOfflineTest` (auth-hash + Gson mapping) and `TestingbotRestMockTest` (every endpoint, against a local `HttpServer`) run with no credentials:
+
+```java
+mvn -Dtest='TestingbotRestOfflineTest,TestingbotRestMockTest' test
+```
+
+`TestingBotRestTest` runs against the live API and needs your key and secret:
 
 ```java
 mvn -DTB_KEY=... -DTB_SECRET=... test
