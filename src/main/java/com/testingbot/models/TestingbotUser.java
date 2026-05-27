@@ -9,10 +9,12 @@ public class TestingbotUser implements Serializable {
 
    @SerializedName("first_name") private String firstName;
    @SerializedName("last_name") private String lastName;
+   private String email;
    private int seconds;
    @SerializedName("last_login") private String lastLoginDate;
    private String plan;
    @SerializedName("max_concurrent") private int maxConcurrent;
+   @SerializedName("max_concurrent_mobile") private int maxConcurrentMobile;
    private String company;
    private String street;
    private String city;
@@ -45,6 +47,20 @@ public class TestingbotUser implements Serializable {
      */
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    /**
+     * @return the account email address
+     */
+    public String getEmail() {
+        return email;
+    }
+
+    /**
+     * @param email the email address to set
+     */
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     /**
@@ -101,6 +117,20 @@ public class TestingbotUser implements Serializable {
      */
     public void setMaxConcurrent(int maxConcurrent) {
         this.maxConcurrent = maxConcurrent;
+    }
+
+    /**
+     * @return the maximum number of parallel physical device sessions
+     */
+    public int getMaxConcurrentMobile() {
+        return maxConcurrentMobile;
+    }
+
+    /**
+     * @param maxConcurrentMobile the max concurrent mobile sessions to set
+     */
+    public void setMaxConcurrentMobile(int maxConcurrentMobile) {
+        this.maxConcurrentMobile = maxConcurrentMobile;
     }
 
     /**

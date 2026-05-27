@@ -14,6 +14,7 @@ import java.io.Serializable;
 public class TestingbotBrowser implements Serializable {
     private static final long serialVersionUID = 1L;
     private String name;
+    @SerializedName("selenium_name") private String seleniumName;
     private String platform;
     @SerializedName("browser_id") private int id;
     @SerializedName("long_version") private String longVersion;
@@ -33,6 +34,20 @@ public class TestingbotBrowser implements Serializable {
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * @return the selenium_name (the browserName WebDriver capability value)
+     */
+    public String getSeleniumName() {
+        return seleniumName;
+    }
+
+    /**
+     * @param seleniumName the selenium_name to set
+     */
+    public void setSeleniumName(String seleniumName) {
+        this.seleniumName = seleniumName;
     }
 
     /**

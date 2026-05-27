@@ -4,16 +4,16 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class TestingBotStorageFileCollection implements Serializable {
+public class TestingbotTeamMemberCollection implements Serializable {
     private static final long serialVersionUID = 1L;
-    private ArrayList<TestingBotStorageFile> data = new ArrayList<>();
+    private ArrayList<TestingbotTeamMember> data = new ArrayList<>();
     private HashMap<String, Integer> meta = new HashMap<String, Integer>();
 
-    public ArrayList<TestingBotStorageFile> getData() {
+    public ArrayList<TestingbotTeamMember> getData() {
         return data;
     }
 
-    public void setData(ArrayList<TestingBotStorageFile> data) {
+    public void setData(ArrayList<TestingbotTeamMember> data) {
         this.data = data;
     }
 

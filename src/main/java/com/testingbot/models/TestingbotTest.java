@@ -8,24 +8,99 @@ import java.util.Map;
 
 public class TestingbotTest implements Serializable {
     private static final long serialVersionUID = 1L;
+    private int id;
     @SerializedName("created_at") private String createdDate;
     @SerializedName("completed_at") private String completedDate;
     private String extra;
     private String name;
     @SerializedName("session_id") private String sessionId;
     private boolean success;
+    @SerializedName("status_id") private int statusId;
     @SerializedName("status_message") private String statusMessage;
     private String state;
     private String browser;
     @SerializedName("browser_version") private String browserVersion;
     private String os;
+    @SerializedName("device_name") private String deviceName;
+    @SerializedName("platform_name") private String platformName;
     private int duration;
     private String build;
     private String video;
     private ArrayList<String> thumbs;
     private Map<String, String> logs;
     private ArrayList<String> groups;
+    @SerializedName("assets_available") private boolean assetsAvailable;
     private String type;
+
+    /**
+     * @return the numeric test id
+     */
+    public int getId() {
+        return id;
+    }
+
+    /**
+     * @param id the numeric test id to set
+     */
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    /**
+     * @return the status id (0 = fail, 1 = pass, 2 = unknown)
+     */
+    public int getStatusId() {
+        return statusId;
+    }
+
+    /**
+     * @param statusId the status id to set
+     */
+    public void setStatusId(int statusId) {
+        this.statusId = statusId;
+    }
+
+    /**
+     * @return the mobile device name
+     */
+    public String getDeviceName() {
+        return deviceName;
+    }
+
+    /**
+     * @param deviceName the device name to set
+     */
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
+    }
+
+    /**
+     * @return the platform name
+     */
+    public String getPlatformName() {
+        return platformName;
+    }
+
+    /**
+     * @param platformName the platform name to set
+     */
+    public void setPlatformName(String platformName) {
+        this.platformName = platformName;
+    }
+
+    /**
+     * @return whether assets (video, logs) are available
+     */
+    public boolean isAssetsAvailable() {
+        return assetsAvailable;
+    }
+
+    /**
+     * @param assetsAvailable the assets-available flag to set
+     */
+    public void setAssetsAvailable(boolean assetsAvailable) {
+        this.assetsAvailable = assetsAvailable;
+    }
 
     /**
      * @return the createdDate

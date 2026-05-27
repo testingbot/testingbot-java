@@ -11,7 +11,12 @@ public class TestingbotDevice implements Serializable {
     private String cpu;
     @SerializedName("model_number") private String modelNumber;
     private String name;
+    private String model;
+    private String manufacturer;
     @SerializedName("platform_name") private String platformName;
+    @SerializedName("platform_version") private String platformVersion;
+    @SerializedName("screen_size") private String screenSize;
+    @SerializedName("screen_resolution") private String screenResolution;
     @SerializedName("free_trial") private boolean freeTrial;
     private boolean available;
 
@@ -86,6 +91,34 @@ public class TestingbotDevice implements Serializable {
     }
 
     /**
+     * @return the model identifier
+     */
+    public String getModel() {
+        return model;
+    }
+
+    /**
+     * @param model the model identifier to set
+     */
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    /**
+     * @return the manufacturer (e.g. Apple, Samsung)
+     */
+    public String getManufacturer() {
+        return manufacturer;
+    }
+
+    /**
+     * @param manufacturer the manufacturer to set
+     */
+    public void setManufacturer(String manufacturer) {
+        this.manufacturer = manufacturer;
+    }
+
+    /**
      * @return the platformName
      */
     public String getPlatformName() {
@@ -97,6 +130,48 @@ public class TestingbotDevice implements Serializable {
      */
     public void setPlatformName(String platformName) {
         this.platformName = platformName;
+    }
+
+    /**
+     * @return the platform (OS) version
+     */
+    public String getPlatformVersion() {
+        return platformVersion;
+    }
+
+    /**
+     * @param platformVersion the platform version to set
+     */
+    public void setPlatformVersion(String platformVersion) {
+        this.platformVersion = platformVersion;
+    }
+
+    /**
+     * @return the screen size (inches)
+     */
+    public String getScreenSize() {
+        return screenSize;
+    }
+
+    /**
+     * @param screenSize the screen size to set
+     */
+    public void setScreenSize(String screenSize) {
+        this.screenSize = screenSize;
+    }
+
+    /**
+     * @return the screen resolution
+     */
+    public String getScreenResolution() {
+        return screenResolution;
+    }
+
+    /**
+     * @param screenResolution the screen resolution to set
+     */
+    public void setScreenResolution(String screenResolution) {
+        this.screenResolution = screenResolution;
     }
 
     /**
