@@ -25,7 +25,10 @@ import java.lang.reflect.Type;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.http.HttpEntity;
@@ -418,6 +421,79 @@ public class TestingbotREST implements Closeable {
             }
         }
         return this.apiGet(url.toString(), new TypeToken<TestingbotTestCollection>(){}.getType());
+    }
+
+    /**
+     * Lazily iterates over all tests, paging through the API behind the scenes.
+     * Iteration stops when the API returns a page smaller than {@code pageSize}.
+     *
+     * <p>Each call to {@link Iterable#iterator()} starts a fresh walk from offset 0.
+     *
+     * @param pageSize the number of tests to fetch per request (must be {@code > 0})
+     * @return an {@link Iterable} that walks every test in the account
+     */
+    public Iterable<TestingbotTest> iterateTests(int pageSize) {
+        return iterateTests(pageSize, null);
+    }
+
+    /**
+     * Lazily iterates over all tests matching the given filters, paging behind the scenes.
+     *
+     * @param pageSize the number of tests to fetch per request (must be {@code > 0})
+     * @param filters optional server-side filters (may be null)
+     * @return an {@link Iterable} that walks every matching test
+     */
+    public Iterable<TestingbotTest> iterateTests(final int pageSize, final Map<String, String> filters) {
+        if (pageSize <= 0) {
+            throw new IllegalArgumentException("pageSize must be > 0");
+        }
+        return new Iterable<TestingbotTest>() {
+            @Override
+            public Iterator<TestingbotTest> iterator() {
+                return new Iterator<TestingbotTest>() {
+                    private int offset = 0;
+                    private Iterator<TestingbotTest> page = Collections.<TestingbotTest>emptyList().iterator();
+                    private boolean exhausted = false;
+
+                    private void advanceIfNeeded() {
+                        if (exhausted || page.hasNext()) {
+                            return;
+                        }
+                        TestingbotTestCollection collection = filters == null
+                                ? getTests(offset, pageSize)
+                                : getTests(offset, pageSize, filters);
+                        List<TestingbotTest> items = collection != null && collection.getData() != null
+                                ? collection.getData()
+                                : Collections.<TestingbotTest>emptyList();
+                        offset += items.size();
+                        page = items.iterator();
+                        if (items.size() < pageSize) {
+                            exhausted = true;
+                        }
+                    }
+
+                    @Override
+                    public boolean hasNext() {
+                        advanceIfNeeded();
+                        return page.hasNext();
+                    }
+
+                    @Override
+                    public TestingbotTest next() {
+                        advanceIfNeeded();
+                        if (!page.hasNext()) {
+                            throw new NoSuchElementException();
+                        }
+                        return page.next();
+                    }
+
+                    @Override
+                    public void remove() {
+                        throw new UnsupportedOperationException();
+                    }
+                };
+            }
+        };
     }
 
     /**

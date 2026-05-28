@@ -20,9 +20,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import static org.junit.Assert.*;
 
@@ -47,6 +49,8 @@ public class TestingbotRestMockTest {
     // configurable response
     private volatile int responseStatus = 200;
     private volatile String responseBody = "{\"success\":true}";
+    private final java.util.concurrent.ConcurrentLinkedDeque<String> responseBodies = new java.util.concurrent.ConcurrentLinkedDeque<>();
+    private final java.util.List<String> requestUrls = java.util.Collections.synchronizedList(new ArrayList<String>());
 
     @Before
     public void setUp() throws IOException {
@@ -60,8 +64,13 @@ public class TestingbotRestMockTest {
                 lastAuth = ex.getRequestHeaders().getFirst("Authorization");
                 lastUserAgent = ex.getRequestHeaders().getFirst("User-Agent");
                 lastBody = read(ex.getRequestBody());
+                requestUrls.add(lastPath + (lastQuery != null ? "?" + lastQuery : ""));
 
-                byte[] out = responseBody == null ? new byte[0] : responseBody.getBytes(StandardCharsets.UTF_8);
+                String body = responseBodies.pollFirst();
+                if (body == null) {
+                    body = responseBody;
+                }
+                byte[] out = body == null ? new byte[0] : body.getBytes(StandardCharsets.UTF_8);
                 ex.sendResponseHeaders(responseStatus, out.length == 0 ? -1 : out.length);
                 if (out.length > 0) {
                     OutputStream os = ex.getResponseBody();
@@ -715,5 +724,71 @@ public class TestingbotRestMockTest {
         respond(200, "{\"success\":true,\"job_id\":5}");
         api.triggerLabSuite(4);
         assertRequest("POST", "/v1/labsuites/4/trigger");
+    }
+
+    // ------------------------------------------------------------------ pagination iterator
+
+    private static String pageJson(int from, int count) {
+        StringBuilder sb = new StringBuilder("{\"data\":[");
+        for (int i = 0; i < count; i++) {
+            if (i > 0) {
+                sb.append(',');
+            }
+            sb.append("{\"session_id\":\"s").append(from + i).append("\"}");
+        }
+        sb.append("],\"meta\":{}}");
+        return sb.toString();
+    }
+
+    @Test
+    public void iterateTestsWalksAllPages() {
+        // 3 pages of 10, 10, 5 (last short page signals end-of-stream)
+        responseBodies.add(pageJson(0, 10));
+        responseBodies.add(pageJson(10, 10));
+        responseBodies.add(pageJson(20, 5));
+
+        int seen = 0;
+        for (TestingbotTest t : api.iterateTests(10)) {
+            Assert.assertEquals("s" + seen, t.getSessionId());
+            seen++;
+        }
+        Assert.assertEquals(25, seen);
+        Assert.assertEquals(3, requestUrls.size());
+        assertTrue(requestUrls.get(0).contains("offset=0"));
+        assertTrue(requestUrls.get(1).contains("offset=10"));
+        assertTrue(requestUrls.get(2).contains("offset=20"));
+    }
+
+    @Test
+    public void iterateTestsStopsImmediatelyOnEmptyPage() {
+        responseBodies.add("{\"data\":[],\"meta\":{}}");
+        Iterator<TestingbotTest> it = api.iterateTests(10).iterator();
+        assertFalse(it.hasNext());
+        Assert.assertEquals(1, requestUrls.size());
+        try {
+            it.next();
+            Assert.fail("expected NoSuchElementException");
+        } catch (NoSuchElementException expected) {
+        }
+    }
+
+    @Test
+    public void iterateTestsForwardsFilters() {
+        responseBodies.add(pageJson(0, 1)); // short page → stops after one request
+        Map<String, String> filters = new HashMap<>();
+        filters.put("group", "smoke");
+        int seen = 0;
+        for (TestingbotTest ignored : api.iterateTests(10, filters)) {
+            seen++;
+        }
+        Assert.assertEquals(1, seen);
+        Assert.assertEquals(1, requestUrls.size());
+        assertTrue(requestUrls.get(0).contains("group=smoke"));
+        assertTrue(requestUrls.get(0).contains("offset=0"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void iterateTestsRejectsNonPositivePageSize() {
+        api.iterateTests(0);
     }
 }
