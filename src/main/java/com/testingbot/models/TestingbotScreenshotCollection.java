@@ -4,6 +4,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Paginated list of screenshot batches ({@code data} + {@code meta}).
+ *
+ * @since 1.1.0
+ */
 public class TestingbotScreenshotCollection implements Serializable {
     private static final long serialVersionUID = 1L;
     private ArrayList<TestingbotScreenshot> data = new ArrayList<>();

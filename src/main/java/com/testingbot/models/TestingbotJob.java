@@ -6,8 +6,10 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * Represents a job (e.g. a Codeless test run) on TestingBot.
+ * Status of a job (e.g. a Codeless test run) on TestingBot.
  * See <a href="https://testingbot.com/support/api">https://testingbot.com/support/api</a>.
+ *
+ * @since 1.1.0
  */
 public class TestingbotJob implements Serializable {
     private static final long serialVersionUID = 1L;

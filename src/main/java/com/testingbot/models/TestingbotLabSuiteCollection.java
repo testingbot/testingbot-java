@@ -4,6 +4,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Paginated list of Codeless test suites ({@code data} + {@code meta}).
+ *
+ * @since 1.1.0
+ */
 public class TestingbotLabSuiteCollection implements Serializable {
     private static final long serialVersionUID = 1L;
     private ArrayList<TestingbotLabSuite> data = new ArrayList<>();

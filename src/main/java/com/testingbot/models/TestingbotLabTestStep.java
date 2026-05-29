@@ -4,6 +4,11 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
+/**
+ * A single step within a Codeless test (command + locator + value).
+ *
+ * @since 1.1.0
+ */
 public class TestingbotLabTestStep implements Serializable {
     private static final long serialVersionUID = 1L;
     @SerializedName("test_order") private int testOrder;

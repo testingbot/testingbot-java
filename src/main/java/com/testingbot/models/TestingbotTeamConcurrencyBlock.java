@@ -2,6 +2,11 @@ package com.testingbot.models;
 
 import java.io.Serializable;
 
+/**
+ * Allowed vs. current concurrency caps for a team.
+ *
+ * @since 1.1.0
+ */
 public class TestingbotTeamConcurrencyBlock implements Serializable {
     private static final long serialVersionUID = 1L;
     private TestingbotTeamConcurrency allowed;

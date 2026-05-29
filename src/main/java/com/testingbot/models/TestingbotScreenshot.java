@@ -5,6 +5,11 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * A screenshot batch — a single URL captured across one or more browsers.
+ *
+ * @since 1.1.0
+ */
 public class TestingbotScreenshot implements Serializable {
     private static final long serialVersionUID = 1L;
     private int id;

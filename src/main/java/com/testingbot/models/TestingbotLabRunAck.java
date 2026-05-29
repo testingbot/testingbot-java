@@ -4,6 +4,11 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
+/**
+ * Response from triggering a Codeless test or suite — carries the {@code job_id}.
+ *
+ * @since 1.1.0
+ */
 public class TestingbotLabRunAck implements Serializable {
     private static final long serialVersionUID = 1L;
     private boolean success;

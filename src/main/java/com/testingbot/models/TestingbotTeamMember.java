@@ -4,6 +4,11 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
+/**
+ * A user within a team.
+ *
+ * @since 1.1.0
+ */
 public class TestingbotTeamMember implements Serializable {
     private static final long serialVersionUID = 1L;
     private int id;

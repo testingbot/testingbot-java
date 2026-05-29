@@ -2,6 +2,11 @@ package com.testingbot.models;
 
 import java.io.Serializable;
 
+/**
+ * Alert configuration for a Codeless test ({@code kind}, {@code level}, destination).
+ *
+ * @since 1.1.0
+ */
 public class TestingbotLabAlert implements Serializable {
     private static final long serialVersionUID = 1L;
     private String type;

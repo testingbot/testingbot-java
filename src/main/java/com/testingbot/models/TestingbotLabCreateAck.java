@@ -4,6 +4,11 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
+/**
+ * Response from creating a Codeless test — carries the new {@code lab_test_id}.
+ *
+ * @since 1.1.0
+ */
 public class TestingbotLabCreateAck implements Serializable {
     private static final long serialVersionUID = 1L;
     private boolean success;

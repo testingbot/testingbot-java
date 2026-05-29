@@ -53,11 +53,44 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Simple Java API that invokes the TestingBot REST API. The full list of the
- * TestingBot API functionality is available from
- * <a href="https://testingbot.com/support/api">https://testingbot.com/support/api</a>.
+ * Java client for the TestingBot REST API. See
+ * <a href="https://testingbot.com/support/api">testingbot.com/support/api</a>
+ * for the full reference; the project README has a usage overview.
+ *
+ * <p><b>Thread safety.</b> Instances are thread-safe: they wrap a single
+ * shared {@link org.apache.http.impl.client.CloseableHttpClient} with bounded
+ * connect/socket timeouts. Create one instance per credential pair and
+ * reuse it across threads rather than constructing one per request.
+ *
+ * <p><b>Lifecycle.</b> The class implements {@link Closeable}; call
+ * {@link #close()} (or use try-with-resources) when you are done to release
+ * pooled connections.
+ *
+ * <p><b>Usage.</b>
+ * <pre>
+ * try (TestingbotREST api = new TestingbotREST(KEY, SECRET)) {
+ *     TestingbotTestCollection tests = api.getTests(0, 10);
+ *     for (TestingbotTest t : tests.getData()) {
+ *         System.out.println(t.getSessionId() + ": " + t.getStatusMessage());
+ *     }
+ * }
+ * </pre>
+ *
+ * <p><b>Errors.</b> Every API method throws {@link TestingbotApiException}
+ * on a 4xx/5xx response — the exception carries the HTTP status and raw
+ * response body via {@link TestingbotApiException#getStatusCode()} and
+ * {@link TestingbotApiException#getResponseBody()} — and
+ * {@link TestingbotUnauthorizedException} on a 401. Both are unchecked
+ * runtime exceptions. Methods that return {@code boolean} return
+ * {@code false} only on a local transport or parse failure; HTTP-level
+ * failures propagate as exceptions.
+ *
+ * <p>Most methods listed below were added in 1.1.0 as part of the full
+ * OpenAPI coverage; see the project CHANGELOG/release notes for the
+ * pre-1.1.0 baseline.
  *
  * @author TestingBot
+ * @since 1.0
  */
 public class TestingbotREST implements Closeable {
 
@@ -500,8 +533,13 @@ public class TestingbotREST implements Closeable {
      * Creates a new test on TestingBot.
      * See https://testingbot.com/support/api
      *
-     * @param testFields the test fields to set (sent as {@code test[...]} parameters)
+     * <p>The fields are sent as Rails-style {@code test[key]} parameters.
+     * Common keys: {@code name}, {@code success}, {@code status_message},
+     * {@code build}, {@code extra}.
+     *
+     * @param testFields the test fields to set
      * @return boolean success
+     * @since 1.1.0
      */
     public boolean createTest(Map<String, Object> testFields) {
         List<NameValuePair> form = new ArrayList<>();
@@ -631,10 +669,16 @@ public class TestingbotREST implements Closeable {
     }
 
     /**
-     * Creates a new user in your team. Required fields: {@code email}, {@code password}.
+     * Creates a new user in your team.
+     *
+     * <p>Required keys: {@code email}, {@code password}. Optional keys:
+     * {@code first_name}, {@code last_name}, {@code concurrency} (max
+     * parallel VM sessions), {@code concurrencyPhysical} (max parallel
+     * physical-device sessions).
      *
      * @param params the new user's attributes
      * @return TestingbotTeamMember
+     * @since 1.1.0
      */
     public TestingbotTeamMember createTeamMember(Map<String, Object> params) {
         return this.apiPost(apiBase + "/team-management/users", formFromMap(null, params), new TypeToken<TestingbotTeamMember>(){}.getType());
@@ -693,11 +737,18 @@ public class TestingbotREST implements Closeable {
     }
 
     /**
-     * Captures a new screenshot batch. Required fields: {@code url},
-     * {@code resolution}, {@code browsers} (a List).
+     * Captures a new screenshot batch.
+     *
+     * <p>Required keys: {@code url} (page URL), {@code resolution} (e.g.
+     * {@code "1920x1080"}), {@code browsers} (a {@code List<String>}; each
+     * entry is a {@code browser_id} or a {@code "browser version os"}
+     * triple). Optional keys: {@code wait_time} (seconds to wait after
+     * page load), {@code fullpage} (capture the entire scrollable page),
+     * {@code callback_url} (POST callback when the batch completes).
      *
      * @param params the screenshot batch parameters
      * @return TestingbotScreenshot
+     * @since 1.1.0
      */
     public TestingbotScreenshot createScreenshots(Map<String, Object> params) {
         return this.apiPost(apiBase + "/screenshots", formFromMap(null, params), new TypeToken<TestingbotScreenshot>(){}.getType());
@@ -718,9 +769,13 @@ public class TestingbotREST implements Closeable {
     /**
      * Updates a manual session.
      *
+     * <p>Fields are sent as Rails-style {@code manual_session[key]} parameters.
+     * Keys: {@code name}, {@code success} (boolean), {@code status_message}.
+     *
      * @param sessionId the numeric manual-session id
-     * @param fields the fields to update (name, success, status_message)
+     * @param fields the fields to update
      * @return boolean success
+     * @since 1.1.0
      */
     public boolean updateManualSession(int sessionId, Map<String, Object> fields) {
         List<NameValuePair> form = new ArrayList<>();
@@ -759,8 +814,17 @@ public class TestingbotREST implements Closeable {
     /**
      * Creates a new Codeless test.
      *
-     * @param testFields the test attributes (sent as {@code test[...]})
-     * @return TestingbotLabCreateAck
+     * <p>The fields are sent as Rails-style {@code test[key]} parameters.
+     * Keys: {@code name}, {@code url} (target URL, required unless a file
+     * is uploaded), {@code cron} (cron expression for scheduled runs),
+     * {@code screenshot} (boolean — take screenshots every step),
+     * {@code video} (boolean), {@code idletimeout} (seconds),
+     * {@code screenresolution} (e.g. {@code "1920x1080"}),
+     * {@code ai_prompt} (instruction for the AI test agent).
+     *
+     * @param testFields the test attributes
+     * @return TestingbotLabCreateAck (includes {@code lab_test_id})
+     * @since 1.1.0
      */
     public TestingbotLabCreateAck createLabTest(Map<String, Object> testFields) {
         return this.apiPost(apiBase + "/lab", formFromMap("test", testFields), new TypeToken<TestingbotLabCreateAck>(){}.getType());
@@ -868,12 +932,19 @@ public class TestingbotREST implements Closeable {
     }
 
     /**
-     * Adds an alert to a Codeless test. Required fields: {@code kind},
-     * {@code level}, {@code content}.
+     * Adds an alert to a Codeless test.
+     *
+     * <p>Required keys:
+     * <ul>
+     *   <li>{@code kind} — one of {@code "EMAIL"}, {@code "API"}, {@code "SMS"}.</li>
+     *   <li>{@code level} — {@code "IMMEDIATELY"} or {@code "DAILY"}.</li>
+     *   <li>{@code content} — destination (email address, callback URL, or phone number).</li>
+     * </ul>
      *
      * @param labTestId the id of the Codeless test
      * @param params the alert parameters
      * @return boolean success
+     * @since 1.1.0
      */
     public boolean addLabTestAlert(int labTestId, Map<String, Object> params) {
         return this.apiPostBoolean(apiBase + "/lab/" + labTestId + "/alert", formFromMap(null, params));
@@ -915,9 +986,22 @@ public class TestingbotREST implements Closeable {
     /**
      * Sets or updates the schedule of a Codeless test.
      *
+     * <p>Keys:
+     * <ul>
+     *   <li>{@code type} — preset: {@code "once"}, {@code "daily"},
+     *       {@code "weekly"}, or {@code "custom"} (use {@code cronFormat}).</li>
+     *   <li>{@code day} — date ({@code YYYY-MM-DD}) for {@code once}, or
+     *       weekday for {@code weekly}.</li>
+     *   <li>{@code hour} — time ({@code HH:MM}) for {@code once},
+     *       {@code daily}, or {@code weekly}.</li>
+     *   <li>{@code cronFormat} — raw 5-field cron expression
+     *       (used when {@code type=custom}).</li>
+     * </ul>
+     *
      * @param labTestId the id of the Codeless test
-     * @param params the schedule parameters (type, day, hour, cronFormat)
+     * @param params the schedule parameters
      * @return boolean success
+     * @since 1.1.0
      */
     public boolean scheduleLabTest(int labTestId, Map<String, Object> params) {
         return this.apiPostBoolean(apiBase + "/lab/" + labTestId + "/schedule", formFromMap(null, params));
@@ -944,10 +1028,17 @@ public class TestingbotREST implements Closeable {
     }
 
     /**
-     * Creates a new Codeless test suite. Required field: {@code name}.
+     * Creates a new Codeless test suite.
      *
-     * @param suiteFields the suite attributes (sent as {@code suite[...]})
-     * @return TestingbotLabSuiteCreateAck
+     * <p>The fields are sent as Rails-style {@code suite[key]} parameters.
+     * Required key: {@code name}. Optional keys: {@code cron},
+     * {@code screenshot} (boolean), {@code video} (boolean),
+     * {@code idletimeout} (seconds), {@code screenresolution} (e.g.
+     * {@code "1920x1080"}).
+     *
+     * @param suiteFields the suite attributes
+     * @return TestingbotLabSuiteCreateAck (includes {@code suite_id})
+     * @since 1.1.0
      */
     public TestingbotLabSuiteCreateAck createLabSuite(Map<String, Object> suiteFields) {
         return this.apiPost(apiBase + "/labsuites", formFromMap("suite", suiteFields), new TypeToken<TestingbotLabSuiteCreateAck>(){}.getType());

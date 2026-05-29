@@ -5,6 +5,11 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * A Codeless test suite (a group of Codeless tests run together).
+ *
+ * @since 1.1.0
+ */
 public class TestingbotLabSuite implements Serializable {
     private static final long serialVersionUID = 1L;
     private int id;
