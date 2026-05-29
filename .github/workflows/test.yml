@@ -5,13 +5,19 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Build/test across the JDK range the library supports (Java 8 floor).
+        java-version: ['8', '11', '17', '21']
+    name: Test (JDK ${{ matrix.java-version }})
     steps:
       - name: Clone Repository
         uses: actions/checkout@v6
       - uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: ${{ matrix.java-version }}
       - name: Test
         run: mvn install -Dgpg.skip=true -B -V
         env:
