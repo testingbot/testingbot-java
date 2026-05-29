@@ -1,4 +1,9 @@
-[![Maven](https://maven-badges.herokuapp.com/maven-central/com.testingbot/testingbotrest/badge.svg)](https://search.maven.org/artifact/com.testingbot/testingbotrest)
+[![Maven Central](https://img.shields.io/maven-central/v/com.testingbot/testingbotrest.svg?label=Maven%20Central)](https://central.sonatype.com/artifact/com.testingbot/testingbotrest)
+[![Javadoc](https://javadoc.io/badge2/com.testingbot/testingbotrest/javadoc.svg)](https://javadoc.io/doc/com.testingbot/testingbotrest)
+[![Tests](https://github.com/testingbot/testingbot-java/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/testingbot/testingbot-java/actions/workflows/test.yml)
+[![CodeQL](https://github.com/testingbot/testingbot-java/actions/workflows/codeql-analysis.yml/badge.svg?branch=master)](https://github.com/testingbot/testingbot-java/actions/workflows/codeql-analysis.yml)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
+[![Java](https://img.shields.io/badge/Java-1.7%2B-blue.svg)](https://www.oracle.com/java/)
 
 TestingBotREST Java
 ====================
