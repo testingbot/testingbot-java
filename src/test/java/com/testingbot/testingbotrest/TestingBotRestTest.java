@@ -6,6 +6,7 @@ import java.io.File;
 import java.util.*;
 
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import static org.hamcrest.CoreMatchers.is;
@@ -21,7 +22,14 @@ public class TestingBotRestTest {
     
     @Before
     public void setUp() {
-        this.api = new TestingbotREST(System.getenv("TB_KEY"), System.getenv("TB_SECRET"));
+        String key = System.getenv("TB_KEY");
+        String secret = System.getenv("TB_SECRET");
+        // Live integration suite: skip (not fail) when credentials are absent,
+        // e.g. on Dependabot or outside-contributor PRs that lack Actions secrets.
+        // The mock suite still runs; this suite runs on master pushes / releases.
+        Assume.assumeTrue("TB_KEY/TB_SECRET not set; skipping live API tests",
+                key != null && !key.isEmpty() && secret != null && !secret.isEmpty());
+        this.api = new TestingbotREST(key, secret);
     }
     
     @Test
