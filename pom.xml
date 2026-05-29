@@ -14,11 +14,6 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>7</version>
-    </parent>
     <organization>
         <name>TestingBot</name>
         <url>https://testingbot.com/</url>
@@ -32,37 +27,16 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:git://github.com/testingbot/testingbot-java.git</connection>
+        <connection>scm:git:https://github.com/testingbot/testingbot-java.git</connection>
         <developerConnection>scm:git:git@github.com:testingbot/testingbot-java.git</developerConnection>
-        <url>git@github.com:testingbot/testingbot-java.git</url>
+        <url>https://github.com/testingbot/testingbot-java</url>
         <tag>HEAD</tag>
     </scm>
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <junit.version>4.13.2</junit.version>
     </properties>
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <name>Nexus Release Repository</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <name>Nexus Release Repository</name>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
-    <profiles>
-      <profile>
-        <id>JDK 8 Build</id>
-        <activation>
-          <jdk>[1.8,)</jdk>
-        </activation>
-        <properties>
-          <additionalparam>-Xdoclint:none</additionalparam>
-        </properties>
-      </profile>
-    </profiles>
     <dependencies>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
@@ -127,14 +101,14 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.12</version>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.7.0</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                    <publishingServerId>central</publishingServerId>
+                    <autoPublish>true</autoPublish>
+                    <waitUntil>published</waitUntil>
                 </configuration>
             </plugin>
             <plugin>
@@ -186,7 +160,6 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.5.3</version>
                 <configuration>
-                    <goals>deploy nexus-staging:release</goals>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <useReleaseProfile>false</useReleaseProfile>
                     <releaseProfiles>release</releaseProfiles>
@@ -239,6 +212,7 @@
                 <configuration>
                     <source>8</source>
                     <detectJavaApiLink>false</detectJavaApiLink>
+                    <doclint>none</doclint>
                 </configuration>
                 <executions>
                     <execution>
