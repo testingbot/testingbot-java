@@ -20,6 +20,3 @@ jobs:
           java-version: ${{ matrix.java-version }}
       - name: Test
         run: mvn install -Dgpg.skip=true -B -V
-        env:
-          TB_KEY: ${{ secrets.TB_KEY }}
-          TB_SECRET: ${{ secrets.TB_SECRET }}
