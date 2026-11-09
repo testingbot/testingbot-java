@@ -431,7 +431,7 @@ public class TestingbotREST implements Closeable {
      * @return boolean success
      */
     public boolean deleteStorageFile(String appUrl) {
-        return this.apiBoolean(new HttpDelete(apiBase + "/storage/" + enc(appUrl)), null);
+        return this.apiBoolean(new HttpDelete(apiBase + "/storage/" + enc(appUrl.replace("tb://", ""))), null);
     }
 
 

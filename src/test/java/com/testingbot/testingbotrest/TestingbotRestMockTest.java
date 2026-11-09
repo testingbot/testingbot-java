@@ -404,6 +404,12 @@ public class TestingbotRestMockTest {
         assertRequest("DELETE", "/v1/storage/xyz");
     }
 
+    @Test
+    public void deleteStorageFileAcceptsAppUrl() {
+        api.deleteStorageFile("tb://xyz");
+        assertRequest("DELETE", "/v1/storage/xyz");
+    }
+
     // ------------------------------------------------------------------ jobs / config
 
     @Test

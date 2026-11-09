@@ -3,7 +3,7 @@
 [![Tests](https://github.com/testingbot/testingbot-java/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/testingbot/testingbot-java/actions/workflows/test.yml)
 [![CodeQL](https://github.com/testingbot/testingbot-java/actions/workflows/codeql-analysis.yml/badge.svg?branch=master)](https://github.com/testingbot/testingbot-java/actions/workflows/codeql-analysis.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
-[![Java](https://img.shields.io/badge/Java-1.7%2B-blue.svg)](https://www.oracle.com/java/)
+[![Java](https://img.shields.io/badge/Java-8%2B-blue.svg)](https://www.oracle.com/java/)
 
 TestingBotREST Java
 ====================
@@ -36,7 +36,7 @@ Retrieves collection of available browsers
 
 
 ```java
-ArrayList<TestingbotBrowser> devices = restApi.getBrowsers();
+ArrayList<TestingbotBrowser> browsers = restApi.getBrowsers();
 ```
 
 ### getDevices
@@ -45,7 +45,7 @@ Retrieves collection of available devices
 
 
 ```java
-ArrayList<TestingbotDevice> devices = restApi.getDevices();
+List<TestingbotDevice> devices = restApi.getDevices(int offset, int count);
 ```
 
 ### getAvailableDevices
@@ -54,7 +54,7 @@ Retrieves collection of available devices
 
 
 ```java
-ArrayList<TestingbotDevice> devices = restApi.getAvailableDevices();
+List<TestingbotDevice> devices = restApi.getAvailableDevices();
 ```
 
 ### getDevice
@@ -150,7 +150,7 @@ Updates information about the current user
 
 
 ```java
-TestingbotUser user = restApi.updateUserInfo(TestingBotUser);
+boolean success = restApi.updateUserInfo(TestingbotUser user);
 ```
 
 ### getTunnels
@@ -406,8 +406,8 @@ Maven
   <dependency>
     <groupId>com.testingbot</groupId>
     <artifactId>testingbotrest</artifactId>
-    <version>1.0.8</version>
+    <version>1.1.0</version>
     <scope>test</scope>
   </dependency>
-</dependencies
+</dependencies>
 ```
